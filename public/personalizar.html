@@ -4,7 +4,150 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Personalizar - AC Grafic</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --border: #cbd5e1;
+      --danger: #dc2626;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    
+    body { background: var(--bg); color: var(--text); min-height: 100vh; }
+    
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+    header { background: var(--primary); color: white; padding: 15px 0; }
+    header .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    header h1 { font-size: 28px; }
+    nav a { color: white; margin-left: 20px; text-decoration: none; font-weight: 500; padding: 6px 12px; border-radius: 6px; }
+    nav a:hover { background: rgba(255,255,255,0.2); }
+    
+    h2 { margin: 30px 0 20px; color: var(--text); }
+
+    /* EDITOR */
+    .editor { 
+      display: grid; 
+      grid-template-columns: 1fr 350px; 
+      gap: 30px; 
+      align-items: start; 
+    }
+
+    .canvas-area {
+      background: #e2e8f0;
+      min-height: 500px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      position: relative;
+    }
+
+    .moldura {
+      width: 350px;
+      height: 350px;
+      overflow: hidden;
+      position: relative;
+      background: #fff;
+      border: 4px dashed #2563eb;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+    }
+
+    .moldura:active { cursor: grabbing; }
+
+    .moldura.redondo { border-radius: 50%; }
+    .moldura.quadrado { border-radius: 12px; }
+
+    .moldura img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      transform-origin: center center;
+    }
+
+    .editor-hint {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      pointer-events: none;
+    }
+
+    .controles { 
+      background: var(--card); 
+      padding: 20px; 
+      border-radius: 12px; 
+      border: 1px solid var(--border); 
+      display: flex; 
+      flex-direction: column; 
+      gap: 12px; 
+    }
+    
+    .controles label { 
+      font-weight: 600; 
+      font-size: 14px; 
+      color: var(--text);
+    }
+    
+    .controles input, .controles select { 
+      padding: 10px; 
+      border: 1px solid var(--border); 
+      border-radius: 6px; 
+      font-size: 14px; 
+      width: 100%; 
+    }
+
+    .btn-primary { 
+      background: var(--primary); 
+      color: white; 
+      border: none; 
+      padding: 12px 24px; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      font-size: 16px; 
+      font-weight: 500; 
+      width: 100%;
+      margin-top: 10px;
+    }
+    
+    .btn-primary:hover { background: var(--primary-dark); }
+
+    .btn-reset {
+      background: #64748b;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    .btn-reset:hover { background: #475569; }
+
+    @media (max-width: 768px) {
+      .editor { grid-template-columns: 1fr; }
+      header .container { flex-direction: column; gap: 10px; }
+      nav a { margin: 0 5px; }
+      .moldura { width: 280px; height: 280px; }
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -30,16 +173,16 @@
       </div>
 
       <div class="controles">
-        <label>Enviar imagem:</label>
+        <label>📤 Enviar imagem:</label>
         <input type="file" id="upload" accept="image/*">
 
-        <label>Formato:</label>
+        <label>📐 Formato:</label>
         <select id="formato">
           <option value="redondo">Redondo</option>
           <option value="quadrado">Quadrado</option>
         </select>
 
-        <label>Tamanho:</label>
+        <label>📏 Tamanho:</label>
         <select id="tamanho">
           <option value="3x3">3,0 cm</option>
           <option value="3.5x3.5">3,5 cm</option>
@@ -47,27 +190,169 @@
           <option value="5x5">5,0 cm</option>
         </select>
 
-        <label>Quantidade:</label>
+        <label>🔢 Quantidade:</label>
         <input type="number" id="quantidade" value="1" min="1">
 
-        <label>Selecione a barraca:</label>
+        <label>🏪 Selecione a barraca:</label>
         <select id="barraca">
           <option value="Barraca 1">Barraca 1</option>
           <option value="Barraca 2">Barraca 2</option>
           <option value="Barraca 3">Barraca 3</option>
         </select>
 
-        <label>Seu nome:</label>
+        <label>👤 Seu nome:</label>
         <input type="text" id="cliente_nome" placeholder="Nome completo">
 
-        <label>Telefone:</label>
+        <label>📱 Telefone:</label>
         <input type="text" id="cliente_telefone" placeholder="(XX) XXXXX-XXXX">
 
-        <button id="btn-finalizar" class="btn-primary">Finalizar Pedido</button>
+        <label>🔍 Zoom:</label>
+        <input type="range" id="zoom-slider" min="0.3" max="5" step="0.1" value="1">
+
+        <button id="btn-reset" class="btn-reset">🔄 Resetar Posição</button>
+
+        <button id="btn-finalizar" class="btn-primary">✅ Finalizar Pedido</button>
       </div>
     </div>
   </main>
 
-  <script src="/js/editor.js"></script>
+  <script>
+    const upload = document.getElementById('upload');
+    const previewImg = document.getElementById('preview-img');
+    const formato = document.getElementById('formato');
+    const moldura = document.getElementById('moldura');
+    const btnFinalizar = document.getElementById('btn-finalizar');
+    const btnReset = document.getElementById('btn-reset');
+    const zoomSlider = document.getElementById('zoom-slider');
+
+    const produto = localStorage.getItem('produto_selecionado') || 'Botton Redondo';
+    document.getElementById('titulo-produto').innerText = `Personalizar: ${produto}`;
+
+    if (produto.toLowerCase().includes('quadrado')) {
+      formato.value = 'quadrado';
+      moldura.classList.remove('redondo');
+      moldura.classList.add('quadrado');
+    } else {
+      formato.value = 'redondo';
+      moldura.classList.remove('quadrado');
+      moldura.classList.add('redondo');
+    }
+
+    let imageState = { x: 0, y: 0, scale: 1, isDragging: false, startX: 0, startY: 0 };
+
+    upload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        previewImg.src = event.target.result;
+        imageState = { x: 0, y: 0, scale: 1, isDragging: false, startX: 0, startY: 0 };
+        zoomSlider.value = 1;
+        atualizarTransform();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function atualizarTransform() {
+      previewImg.style.transform = `translate(${imageState.x}px, ${imageState.y}px) scale(${imageState.scale})`;
+    }
+
+    // DRAG - Mouse
+    moldura.addEventListener('mousedown', (e) => {
+      if (!previewImg.src) return;
+      imageState.isDragging = true;
+      imageState.startX = e.clientX - imageState.x;
+      imageState.startY = e.clientY - imageState.y;
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!imageState.isDragging) return;
+      e.preventDefault();
+      imageState.x = e.clientX - imageState.startX;
+      imageState.y = e.clientY - imageState.startY;
+      atualizarTransform();
+    });
+
+    document.addEventListener('mouseup', () => { imageState.isDragging = false; });
+
+    // DRAG - Touch
+    moldura.addEventListener('touchstart', (e) => {
+      if (!previewImg.src || e.touches.length !== 1) return;
+      const touch = e.touches[0];
+      imageState.isDragging = true;
+      imageState.startX = touch.clientX - imageState.x;
+      imageState.startY = touch.clientY - imageState.y;
+    }, { passive: true });
+
+    moldura.addEventListener('touchmove', (e) => {
+      if (!imageState.isDragging || e.touches.length !== 1) return;
+      const touch = e.touches[0];
+      imageState.x = touch.clientX - imageState.startX;
+      imageState.y = touch.clientY - imageState.startY;
+      atualizarTransform();
+    }, { passive: true });
+
+    moldura.addEventListener('touchend', () => { imageState.isDragging = false; });
+
+    // ZOOM - Scroll
+    moldura.addEventListener('wheel', (e) => {
+      if (!previewImg.src) return;
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      imageState.scale = Math.max(0.3, Math.min(5, imageState.scale + delta));
+      zoomSlider.value = imageState.scale;
+      atualizarTransform();
+    }, { passive: false });
+
+    // ZOOM - Slider
+    zoomSlider.addEventListener('input', (e) => {
+      imageState.scale = parseFloat(e.target.value);
+      atualizarTransform();
+    });
+
+    // RESET
+    btnReset.addEventListener('click', () => {
+      imageState.x = 0;
+      imageState.y = 0;
+      imageState.scale = 1;
+      zoomSlider.value = 1;
+      atualizarTransform();
+    });
+
+    // FORMATO
+    formato.addEventListener('change', () => {
+      moldura.classList.remove('redondo', 'quadrado');
+      moldura.classList.add(formato.value);
+    });
+
+    // FINALIZAR
+    btnFinalizar.addEventListener('click', async () => {
+      const file = upload.files[0];
+      if (!file) { alert('Envie uma imagem primeiro.'); return; }
+      const clienteNome = document.getElementById('cliente_nome').value.trim();
+      const clienteTel = document.getElementById('cliente_telefone').value.trim();
+      if (!clienteNome || !clienteTel) { alert('Preencha nome e telefone.'); return; }
+
+      const formData = new FormData();
+      formData.append('imagem', file);
+      formData.append('cliente_nome', clienteNome);
+      formData.append('cliente_telefone', clienteTel);
+      formData.append('barraca', document.getElementById('barraca').value);
+      formData.append('produto', produto);
+      formData.append('formato', formato.value);
+      formData.append('tamanho', document.getElementById('tamanho').value);
+      formData.append('quantidade', document.getElementById('quantidade').value);
+
+      const res = await fetch('/api/pedidos', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.id) {
+        alert(`Pedido enviado! Código: #${data.id}`);
+        window.location.href = '/carrinho.html';
+      } else {
+        alert('Erro: ' + (data.error || 'desconhecido'));
+      }
+    });
+  </script>
 </body>
 </html>
