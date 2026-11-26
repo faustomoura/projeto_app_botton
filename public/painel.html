@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <script src="https://myhub.ia.br/canvas-vendor/tailwind.js"></script>
+<head><script src="https://myhub.ia.br/canvas-vendor/tailwind.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel da Barraca - AC Grafic</title>
@@ -25,7 +24,6 @@
     nav a:hover { background: rgba(255,255,255,0.2); }
     h2 { margin: 30px 0 20px; }
 
-    /* ===== TELA DE LOGIN ===== */
     #login-area {
       max-width: 400px;
       margin: 60px auto;
@@ -62,7 +60,6 @@
     #login-msg { color: var(--danger); font-size: 13px; margin-top: 10px; min-height: 18px; }
     .login-lock { font-size: 50px; margin-bottom: 15px; }
 
-    /* ===== PAINEL (PROTEGIDO) ===== */
     #painel-protegido { display: none; }
 
     .painel-header {
@@ -97,20 +94,17 @@
       flex-wrap: wrap;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
-
     .botton-preview {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 8px;
     }
-
     .botton-moldura {
       background: #e2e8f0;
       padding: 15px;
       border-radius: 8px;
     }
-
     .botton-moldura.redondo img {
       width: 120px;
       height: 120px;
@@ -119,7 +113,6 @@
       border: 3px solid #2563eb;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
-
     .botton-moldura.quadrado img {
       width: 120px;
       height: 120px;
@@ -128,25 +121,21 @@
       border: 3px solid #2563eb;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
-
     .pedido-info { flex: 1; min-width: 250px; }
     .pedido-info h3 { color: var(--primary); margin-bottom: 8px; }
     .pedido-info p { margin: 4px 0; font-size: 14px; }
-
     .pedido-acoes {
       display: flex;
       flex-direction: column;
       gap: 8px;
       min-width: 180px;
     }
-
     .pedido-acoes select {
       padding: 8px;
       border: 1px solid var(--border);
       border-radius: 6px;
       font-size: 14px;
     }
-
     .btn-danger {
       background: var(--danger);
       color: white;
@@ -156,9 +145,7 @@
       cursor: pointer;
       font-size: 14px;
     }
-
     .btn-danger:hover { background: #b91c1c; }
-
     .btn-producao {
       background: #10b981;
       color: white;
@@ -169,10 +156,8 @@
       font-size: 14px;
       font-weight: 500;
     }
-
     .btn-producao:hover { background: #059669; }
 
-    /* ===== MODAL DE PRODUÇÃO ===== */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -186,11 +171,7 @@
       align-items: center;
       padding: 20px;
     }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
+    .modal-overlay.active { display: flex; }
     .modal-content {
       background: white;
       border-radius: 12px;
@@ -201,19 +182,13 @@
       overflow-y: auto;
       position: relative;
     }
-
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
     }
-
-    .modal-header h3 {
-      color: var(--primary);
-      font-size: 22px;
-    }
-
+    .modal-header h3 { color: var(--primary); font-size: 22px; }
     .btn-fechar {
       background: #64748b;
       color: white;
@@ -223,9 +198,7 @@
       cursor: pointer;
       font-size: 14px;
     }
-
     .btn-fechar:hover { background: #475569; }
-
     .producao-info {
       background: #f1f5f9;
       padding: 15px;
@@ -233,11 +206,7 @@
       margin-bottom: 20px;
       font-size: 14px;
     }
-
-    .producao-info strong {
-      color: var(--primary);
-    }
-
+    .producao-info strong { color: var(--primary); }
     .canvas-producao {
       background: white;
       border: 2px solid var(--border);
@@ -245,11 +214,11 @@
       padding: 20px;
       text-align: center;
       margin-bottom: 20px;
-      overflow-x: auto;
     }
-
-    #canvas-producao { max-width: 100%; height: auto; }
-
+    .canvas-producao canvas {
+      max-width: 100%;
+      height: auto;
+    }
     .btn-download {
       background: var(--primary);
       color: white;
@@ -261,9 +230,7 @@
       font-weight: 500;
       margin-right: 10px;
     }
-
     .btn-download:hover { background: var(--primary-dark); }
-
     .status {
       padding: 4px 10px;
       border-radius: 12px;
@@ -276,7 +243,6 @@
     .status.em_producao { background: #dbeafe; color: #1e40af; }
     .status.pronto { background: #d1fae5; color: #065f46; }
     .status.entregue { background: #e2e8f0; color: #475569; }
-
     .msg-info {
       padding: 30px;
       background: var(--card);
@@ -285,7 +251,6 @@
       text-align: center;
       color: #64748b;
     }
-
     @media (max-width: 768px) {
       header .container { flex-direction: column; gap: 10px; }
       nav a { margin: 0 5px; }
@@ -305,7 +270,6 @@
     </div>
   </header>
 
-  <!-- ===== TELA DE LOGIN ===== -->
   <div class="container">
     <div id="login-area">
       <div class="login-lock">🔒</div>
@@ -317,7 +281,6 @@
     </div>
   </div>
 
-  <!-- ===== PAINEL PROTEGIDO ===== -->
   <main class="container" id="painel-protegido">
     <div class="painel-header">
       <h2>📋 Pedidos Recebidos</h2>
@@ -328,10 +291,13 @@
     </div>
   </main>
 
-  <!-- ===== MODAL DE PRODUÇÃO ===== -->
   <div id="modal-producao" class="modal-overlay">
     <div class="modal-content">
-      <button class="btn-fechar" onclick="fecharModal()" style="position:absolute;top:15px;right:15px;">✕ Fechar</button>
+      <div class="modal-header">
+        <h3>🖨️ Layout de Produção</h3>
+        <button class="btn-fechar" onclick="fecharModal()">✕ Fechar</button>
+      </div>
+      <div class="producao-info" id="producao-info"></div>
       <div class="canvas-producao">
         <canvas id="canvas-producao"></canvas>
       </div>
@@ -343,28 +309,16 @@
   </div>
 
   <script>
-    // =====================================================
-    // 🔐 SENHA DO OPERADOR (Troque aqui quando quiser)
-    // =====================================================
     const SENHA_OPERADOR = 'AC@2025';
 
-    // =====================================================
-    // 🔐 VERIFICAR SE JÁ ESTÁ LOGADO
-    // =====================================================
     function verificarLogin() {
       const logado = sessionStorage.getItem('painel_logado');
-      if (logado === 'true') {
-        mostrarPainel();
-      }
+      if (logado === 'true') mostrarPainel();
     }
 
-    // =====================================================
-    // 🔐 LOGIN
-    // =====================================================
     function fazerLogin() {
       const senha = document.getElementById('senha-input').value;
       const msg = document.getElementById('login-msg');
-
       if (senha === SENHA_OPERADOR) {
         sessionStorage.setItem('painel_logado', 'true');
         mostrarPainel();
@@ -375,40 +329,28 @@
       }
     }
 
-    // =====================================================
-    // 🔐 LOGOUT
-    // =====================================================
     function sair() {
       sessionStorage.removeItem('painel_logado');
       document.getElementById('painel-protegido').style.display = 'none';
       document.getElementById('login-area').style.display = 'block';
       document.getElementById('senha-input').value = '';
-      document.getElementById('login-area').querySelector('h2').innerText = 'Acesso Restrito';
       document.getElementById('login-msg').innerHTML = '';
     }
 
-    // =====================================================
-    // 🔐 MOSTRAR PAINEL
-    // =====================================================
     function mostrarPainel() {
       document.getElementById('login-area').style.display = 'none';
       document.getElementById('painel-protegido').style.display = 'block';
       carregarPedidos();
     }
 
-    // =====================================================
-    // 📋 CARREGAR PEDIDOS
-    // =====================================================
     async function carregarPedidos() {
       const res = await fetch('/api/pedidos');
       const pedidos = await res.json();
       const div = document.getElementById('pedidos-painel');
-
       if (pedidos.length === 0) {
         div.innerHTML = '<p class="msg-info">Nenhum pedido recebido ainda.</p>';
         return;
       }
-
       div.innerHTML = pedidos.map(p => {
         const classeFormato = p.formato === 'redondo' ? 'redondo' : 'quadrado';
         return `
@@ -442,9 +384,6 @@
       }).join('');
     }
 
-    // =====================================================
-    // 📋 ATUALIZAR STATUS
-    // =====================================================
     async function atualizarStatus(id, status) {
       await fetch(`/api/pedidos/${id}/status`, {
         method: 'PUT',
@@ -454,25 +393,18 @@
       carregarPedidos();
     }
 
-    // =====================================================
-    // 📋 EXCLUIR PEDIDO
-    // =====================================================
     async function excluirPedido(id) {
       if (!confirm('Tem certeza que deseja excluir este pedido?')) return;
       await fetch(`/api/pedidos/${id}`, { method: 'DELETE' });
       carregarPedidos();
     }
 
-    // =====================================================
-    // 🖨️ GERAR LAYOUT DE PRODUÇÃO
-    // =====================================================
     let pedidoAtual = null;
 
     async function gerarProducao(id) {
       const res = await fetch('/api/pedidos');
       const pedidos = await res.json();
       pedidoAtual = pedidos.find(p => p.id === id);
-
       if (!pedidoAtual) return;
 
       document.getElementById('modal-producao').classList.add('active');
@@ -485,7 +417,7 @@
 
       const img = new Image();
       img.crossOrigin = 'anonymous';
-      img.onload = () => gerarCanvas(img, pedidoAtual);
+      img.onload = () => { gerarCanvas(img, pedidoAtual); };
       img.src = `/uploads/${pedidoAtual.imagem}`;
     }
 
@@ -493,107 +425,134 @@
       const canvas = document.getElementById('canvas-producao');
       const ctx = canvas.getContext('2d');
 
-      const DPI = 37.8; // 96 DPI: 1cm ≈ 37.8px
-      const formato = pedido.formato === 'redondo' ? 'redondo' : 'quadrado';
-      const tamanhoBotton = formato === 'redondo' ? 3.5 * DPI : 5 * DPI;
-      const tamanhoBorda = formato === 'redondo' ? 4.7 * DPI : 6.5 * DPI;
+      const DPI = 37.8;
+      let tamanhoBotton, tamanhoBorda, formato;
 
-      // Folha A5 em PAISAGEM: 21cm x 14,8cm
-      canvas.width = Math.round(21 * DPI);
-      canvas.height = Math.round(14.8 * DPI);
+      if (pedido.formato === 'redondo') {
+        tamanhoBotton = 3.5 * DPI;
+        tamanhoBorda = 4.7 * DPI;
+        formato = 'redondo';
+      } else {
+        tamanhoBotton = 5 * DPI;
+        tamanhoBorda = 6.5 * DPI;
+        formato = 'quadrado';
+      }
 
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // A5 paisagem: 21cm x 14.8cm
+      const larguraFolha = 21 * DPI;
+      const alturaFolha = 14.8 * DPI;
+      canvas.width = larguraFolha;
+      canvas.height = alturaFolha;
 
-      // Margens da folha e espaço entre unidades
-      const margemFolha = 0.5 * DPI;
-      const espaco = 0.3 * DPI;
+      const margem = 10; // 0.26cm em pixels
+      const espaco = 5;  // 0.13cm entre unidades
 
-      const areaLarg = canvas.width - 2 * margemFolha;
-      const areaAlt = canvas.height - 2 * margemFolha;
+      const areaUtilLargura = larguraFolha - 2 * margem;
+      const areaUtilAltura = alturaFolha - 2 * margem;
 
-      const cols = Math.max(1, Math.floor((areaLarg + espaco) / (tamanhoBorda + espaco)));
-      const rows = Math.max(1, Math.floor((areaAlt + espaco) / (tamanhoBorda + espaco)));
+      const cols = Math.floor((areaUtilLargura + espaco) / (tamanhoBorda + espaco));
+      const rows = Math.floor((areaUtilAltura + espaco) / (tamanhoBorda + espaco));
       const porFolha = cols * rows;
 
-      const quantidade = Math.max(1, parseInt(pedido.quantidade) || 1);
-      const totalFolhas = Math.ceil(quantidade / porFolha);
+      const totalFolhas = Math.ceil(pedido.quantidade / porFolha);
 
-      // Atualizar informações do pedido
+      // Atualizar info
       const info = document.getElementById('producao-info');
       info.innerHTML = `
-        <strong>Pedido #${pedidoAtual.id}</strong> — ${pedidoAtual.produto}<br>
-        <strong>Cliente:</strong> ${pedidoAtual.cliente_nome} | <strong>Quantidade:</strong> ${quantidade}<br>
-        <strong>Folha A5 (paisagem):</strong> ${porFolha} unidade(s) por folha |
-        <strong>Total de folhas:</strong> ${totalFolhas}<br>
-        <span style="color:#64748b">Mostrando a folha 1 com as primeiras ${Math.min(quantidade, porFolha)} unidade(s).</span>
+        <strong>Pedido #${pedido.id}</strong> — ${pedido.produto}<br>
+        <strong>Cliente:</strong> ${pedido.cliente_nome} | <strong>Quantidade:</strong> ${pedido.quantidade}<br>
+        <strong>Folha A5 (paisagem):</strong> ${porFolha} unidade(s) por folha | <strong>Total de folhas:</strong> ${totalFolhas}
       `;
 
-      // Grade centralizada na folha
-      const gradeLarg = cols * tamanhoBorda + (cols - 1) * espaco;
-      const gradeAlt = rows * tamanhoBorda + (rows - 1) * espaco;
-      const offsetX = (canvas.width - gradeLarg) / 2;
-      const offsetY = (canvas.height - gradeAlt) / 2;
+      // Desenhar apenas a primeira folha
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const corFundo = detectarCorFundo(img);
+      const unidadesNestaFolha = Math.min(pedido.quantidade, porFolha);
 
-      let desenhadas = 0;
-      for (let r = 0; r < rows && desenhadas < quantidade; r++) {
-        for (let c = 0; c < cols && desenhadas < quantidade; c++) {
-          const cx = offsetX + c * (tamanhoBorda + espaco) + tamanhoBorda / 2;
-          const cy = offsetY + r * (tamanhoBorda + espaco) + tamanhoBorda / 2;
-          desenharUnidade(ctx, img, cx, cy, tamanhoBotton, tamanhoBorda, formato, corFundo);
-          desenhadas++;
+      for (let i = 0; i < unidadesNestaFolha; i++) {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+
+        const centroX = margem + tamanhoBorda / 2 + col * (tamanhoBorda + espaco);
+        const centroY = margem + tamanhoBorda / 2 + row * (tamanhoBorda + espaco);
+
+        // Desenhar borda
+        ctx.fillStyle = corFundo;
+        if (formato === 'redondo') {
+          ctx.beginPath();
+          ctx.arc(centroX, centroY, tamanhoBorda / 2, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          const raio = tamanhoBorda * 0.1;
+          ctx.beginPath();
+          ctx.moveTo(centroX - tamanhoBorda/2 + raio, centroY - tamanhoBorda/2);
+          ctx.lineTo(centroX + tamanhoBorda/2 - raio, centroY - tamanhoBorda/2);
+          ctx.arcTo(centroX + tamanhoBorda/2, centroY - tamanhoBorda/2, centroX + tamanhoBorda/2, centroY - tamanhoBorda/2 + raio, raio);
+          ctx.lineTo(centroX + tamanhoBorda/2, centroY + tamanhoBorda/2 - raio);
+          ctx.arcTo(centroX + tamanhoBorda/2, centroY + tamanhoBorda/2, centroX + tamanhoBorda/2 - raio, centroY + tamanhoBorda/2, raio);
+          ctx.lineTo(centroX - tamanhoBorda/2 + raio, centroY + tamanhoBorda/2);
+          ctx.arcTo(centroX - tamanhoBorda/2, centroY + tamanhoBorda/2, centroX - tamanhoBorda/2, centroY + tamanhoBorda/2 - raio, raio);
+          ctx.lineTo(centroX - tamanhoBorda/2, centroY - tamanhoBorda/2 + raio);
+          ctx.arcTo(centroX - tamanhoBorda/2, centroY - tamanhoBorda/2, centroX - tamanhoBorda/2 + raio, centroY - tamanhoBorda/2, raio);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // Desenhar imagem
+        const escala = Math.min(tamanhoBotton / img.width, tamanhoBotton / img.height);
+        const imgLargura = img.width * escala;
+        const imgAltura = img.height * escala;
+        const imgX = centroX - imgLargura / 2;
+        const imgY = centroY - imgAltura / 2;
+
+        ctx.save();
+        if (formato === 'redondo') {
+          ctx.beginPath();
+          ctx.arc(centroX, centroY, tamanhoBotton / 2, 0, Math.PI * 2);
+          ctx.clip();
+        } else {
+          const raioInterno = tamanhoBotton * 0.1;
+          ctx.beginPath();
+          ctx.moveTo(imgX + raioInterno, imgY);
+          ctx.lineTo(imgX + imgLargura - raioInterno, imgY);
+          ctx.arcTo(imgX + imgLargura, imgY, imgX + imgLargura, imgY + raioInterno, raioInterno);
+          ctx.lineTo(imgX + imgLargura, imgY + imgAltura - raioInterno);
+          ctx.arcTo(imgX + imgLargura, imgY + imgAltura, imgX + imgLargura - raioInterno, imgY + imgAltura, raioInterno);
+          ctx.lineTo(imgX + raioInterno, imgY + imgAltura);
+          ctx.arcTo(imgX, imgY + imgAltura, imgX, imgY + imgAltura - raioInterno, raioInterno);
+          ctx.lineTo(imgX, imgY + raioInterno);
+          ctx.arcTo(imgX, imgY, imgX + raioInterno, imgY, raioInterno);
+          ctx.closePath();
+          ctx.clip();
+        }
+        ctx.drawImage(img, imgX, imgY, imgLargura, imgAltura);
+        ctx.restore();
+
+        // Borda preta fina
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 1;
+        if (formato === 'redondo') {
+          ctx.beginPath();
+          ctx.arc(centroX, centroY, tamanhoBorda / 2, 0, Math.PI * 2);
+          ctx.stroke();
+        } else {
+          const raio = tamanhoBorda * 0.1;
+          ctx.beginPath();
+          ctx.moveTo(centroX - tamanhoBorda/2 + raio, centroY - tamanhoBorda/2);
+          ctx.lineTo(centroX + tamanhoBorda/2 - raio, centroY - tamanhoBorda/2);
+          ctx.arcTo(centroX + tamanhoBorda/2, centroY - tamanhoBorda/2, centroX + tamanhoBorda/2, centroY - tamanhoBorda/2 + raio, raio);
+          ctx.lineTo(centroX + tamanhoBorda/2, centroY + tamanhoBorda/2 - raio);
+          ctx.arcTo(centroX + tamanhoBorda/2, centroY + tamanhoBorda/2, centroX + tamanhoBorda/2 - raio, centroY + tamanhoBorda/2, raio);
+          ctx.lineTo(centroX - tamanhoBorda/2 + raio, centroY + tamanhoBorda/2);
+          ctx.arcTo(centroX - tamanhoBorda/2, centroY + tamanhoBorda/2, centroX - tamanhoBorda/2, centroY + tamanhoBorda/2 - raio, raio);
+          ctx.lineTo(centroX - tamanhoBorda/2, centroY - tamanhoBorda/2 + raio);
+          ctx.arcTo(centroX - tamanhoBorda/2, centroY - tamanhoBorda/2, centroX - tamanhoBorda/2 + raio, centroY - tamanhoBorda/2, raio);
+          ctx.closePath();
+          ctx.stroke();
         }
       }
-    }
-
-    function tracarForma(ctx, cx, cy, size, formato, modo) {
-      ctx.beginPath();
-      if (formato === 'redondo') {
-        ctx.arc(cx, cy, size / 2, 0, Math.PI * 2);
-      } else {
-        const r = Math.max(2, size * 0.1);
-        const x = cx - size / 2;
-        const y = cy - size / 2;
-        ctx.moveTo(x + r, y);
-        ctx.lineTo(x + size - r, y);
-        ctx.arcTo(x + size, y, x + size, y + r, r);
-        ctx.lineTo(x + size, y + size - r);
-        ctx.arcTo(x + size, y + size, x + size - r, y + size, r);
-        ctx.lineTo(x + r, y + size);
-        ctx.arcTo(x, y + size, x, y + size - r, r);
-        ctx.lineTo(x, y + r);
-        ctx.arcTo(x, y, x + r, y, r);
-        ctx.closePath();
-      }
-      if (modo === 'fill') ctx.fill();
-      else if (modo === 'clip') ctx.clip();
-      else if (modo === 'stroke') ctx.stroke();
-    }
-
-    function desenharUnidade(ctx, img, cx, cy, tamanhoBotton, tamanhoBorda, formato, corFundo) {
-      // Borda colorida (cor detectada da imagem)
-      ctx.fillStyle = corFundo;
-      tracarForma(ctx, cx, cy, tamanhoBorda, formato, 'fill');
-
-      // Imagem recortada no tamanho do botton
-      const escala = Math.min(tamanhoBotton / img.width, tamanhoBotton / img.height);
-      const imgLargura = img.width * escala;
-      const imgAltura = img.height * escala;
-      const imgX = cx - imgLargura / 2;
-      const imgY = cy - imgAltura / 2;
-
-      ctx.save();
-      tracarForma(ctx, cx, cy, tamanhoBotton, formato, 'clip');
-      ctx.drawImage(img, imgX, imgY, imgLargura, imgAltura);
-      ctx.restore();
-
-      // Linhas de corte
-      ctx.strokeStyle = '#000000';
-      ctx.lineWidth = 1;
-      tracarForma(ctx, cx, cy, tamanhoBorda, formato, 'stroke');
-      tracarForma(ctx, cx, cy, tamanhoBotton, formato, 'stroke');
     }
 
     function detectarCorFundo(img) {
@@ -612,7 +571,6 @@
           amostras.push([pixel[0], pixel[1], pixel[2]]);
         }
       }
-
       for (let y = 0; y < tamanho; y++) {
         for (let x = img.width - tamanho; x < img.width; x++) {
           const pixel = ctx.getImageData(x, y, 1, 1).data;
@@ -622,9 +580,7 @@
 
       let r = 0, g = 0, b = 0;
       amostras.forEach(([pr, pg, pb]) => {
-        r += pr;
-        g += pg;
-        b += pb;
+        r += pr; g += pg; b += pb;
       });
       r = Math.round(r / amostras.length);
       g = Math.round(g / amostras.length);
@@ -645,9 +601,6 @@
       link.click();
     }
 
-    // =====================================================
-    // 🚀 INICIALIZAR
-    // =====================================================
     verificarLogin();
     setInterval(() => {
       if (sessionStorage.getItem('painel_logado') === 'true') {
