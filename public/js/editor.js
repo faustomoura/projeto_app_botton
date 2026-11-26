@@ -55,27 +55,38 @@ btnFinalizar.addEventListener('click', async () => {
     return;
   }
 
+  const clienteNome = document.getElementById('cliente_nome').value.trim();
+  const clienteTel = document.getElementById('cliente_telefone').value.trim();
+
+  if (!clienteNome || !clienteTel) {
+    alert('Preencha seu nome e telefone.');
+    return;
+  }
+
   const formData = new FormData();
   formData.append('imagem', file);
-  formData.append('cliente_nome', document.getElementById('cliente_nome').value);
-  formData.append('cliente_telefone', document.getElementById('cliente_telefone').value);
+  formData.append('cliente_nome', clienteNome);
+  formData.append('cliente_telefone', clienteTel);
   formData.append('barraca', document.getElementById('barraca').value);
   formData.append('produto', produto);
   formData.append('formato', formato.value);
   formData.append('tamanho', document.getElementById('tamanho').value);
   formData.append('quantidade', document.getElementById('quantidade').value);
 
-  const res = await fetch('/api/pedidos', {
-    method: 'POST',
-    body: formData
-  });
+  try {
+    const res = await fetch('/api/pedidos', {
+      method: 'POST',
+      body: formData
+    });
 
-  const data = await res.json();
-  if (data.id) {
-    localStorage.setItem('telefone_cliente', document.getElementById('cliente_telefone').value);
-    alert('Pedido enviado com sucesso! Anote o código: #' + data.id);
-    window.location.href = '/carrinho.html';
-  } else {
-    alert('Erro ao enviar pedido.');
+    const data = await res.json();
+    if (data.id) {
+      alert(`Pedido enviado com sucesso! Código: #${data.id}\nAnote seu telefone para acompanhar.`);
+      window.location.href = '/carrinho.html';
+    } else {
+      alert('Erro ao enviar pedido: ' + (data.error || 'desconhecido'));
+    }
+  } catch (err) {
+    alert('Erro de conexão: ' + err.message);
   }
 });

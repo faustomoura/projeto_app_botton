@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personalizar - AC Grafic</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>🎨 AC Grafic</h1>
+      <nav>
+        <a href="/">Início</a>
+        <a href="/carrinho.html">Meus Pedidos</a>
+        <a href="/painel.html">Painel da Barraca</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2 id="titulo-produto">Personalizar</h2>
+
+    <div class="editor">
+      <div class="canvas-area">
+        <div id="moldura" class="moldura redondo">
+          <img id="preview-img" src="" alt="Pré-visualização">
+        </div>
+      </div>
+
+      <div class="controles">
+        <label>Enviar imagem:</label>
+        <input type="file" id="upload" accept="image/*">
+
+        <label>Zoom:</label>
+        <input type="range" id="zoom" min="0.5" max="3" step="0.1" value="1">
+
+        <label>Posição X:</label>
+        <input type="range" id="posX" min="-100" max="100" value="0">
+
+        <label>Posição Y:</label>
+        <input type="range" id="posY" min="-100" max="100" value="0">
+
+        <label>Formato:</label>
+        <select id="formato">
+          <option value="redondo">Redondo</option>
+          <option value="quadrado">Quadrado</option>
+        </select>
+
+        <label>Tamanho:</label>
+        <select id="tamanho">
+          <option value="3x3">3,0 cm</option>
+          <option value="3.5x3.5">3,5 cm</option>
+          <option value="4x4">4,0 cm</option>
+          <option value="5x5">5,0 cm</option>
+        </select>
+
+        <label>Quantidade:</label>
+        <input type="number" id="quantidade" value="1" min="1">
+
+        <label>Selecione a barraca:</label>
+        <select id="barraca">
+          <option value="Barraca 1">Barraca 1</option>
+          <option value="Barraca 2">Barraca 2</option>
+          <option value="Barraca 3">Barraca 3</option>
+        </select>
+
+        <label>Seu nome:</label>
+        <input type="text" id="cliente_nome" placeholder="Nome completo">
+
+        <label>Telefone:</label>
+        <input type="text" id="cliente_telefone" placeholder="(XX) XXXXX-XXXX">
+
+        <button id="btn-finalizar" class="btn-primary">Finalizar Pedido</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/editor.js"></script>
+</body>
+</html>

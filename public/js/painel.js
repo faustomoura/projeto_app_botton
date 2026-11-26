@@ -4,7 +4,7 @@ async function carregarPedidos() {
 
   const div = document.getElementById('pedidos-painel');
   if (pedidos.length === 0) {
-    div.innerHTML = '<p>Nenhum pedido recebido.</p>';
+    div.innerHTML = '<p class="msg-info">Nenhum pedido recebido.</p>';
     return;
   }
 
@@ -25,7 +25,7 @@ async function carregarPedidos() {
           <option value="pronto" ${p.status === 'pronto' ? 'selected' : ''}>Pronto</option>
           <option value="entregue" ${p.status === 'entregue' ? 'selected' : ''}>Entregue</option>
         </select>
-        <button onclick="excluirPedido(${p.id})" style="background:#dc2626">Excluir</button>
+        <button onclick="excluirPedido(${p.id})" class="btn-danger">Excluir</button>
       </div>
     </div>
   `).join('');

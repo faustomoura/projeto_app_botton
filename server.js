@@ -11,14 +11,24 @@ const PORT = process.env.PORT || 3000;
 // Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
-app.use('/uploads', express.static('uploads'));
 
-// Cria pasta de uploads se não existir
-if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
+// 🔑 Rota explícita para servir o index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Servir arquivos estáticos da pasta public
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Servir uploads
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+app.use('/uploads', express.static(uploadsDir));
 
 // Banco de dados SQLite
-const db = new sqlite3.Database('./database.db');
+const db = new sqlite3.Database(path.join(__dirname, 'database.db'));
 
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS pedidos (
@@ -36,9 +46,9 @@ db.serialize(() => {
   )`);
 });
 
-// Configuração do Multer para upload de imagens
+// Configuração do Multer
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
+  destination: (req, file, cb) => cb(null, uploadsDir),
   filename: (req, file, cb) => {
     const unique = Date.now() + '-' + Math.round(Math.random() * 1E9);
     cb(null, unique + path.extname(file.originalname));
@@ -72,7 +82,7 @@ app.get('/api/pedidos', (req, res) => {
 
 // ROTA: Atualizar status
 app.put('/api/pedidos/:id/status', (req, res) => {
-  const { status } =req.body;
+  const { status } = req.body;
   db.run(`UPDATE pedidos SET status = ? WHERE id = ?`, [status, req.params.id], function(err) {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ message: 'Status atualizado' });
@@ -83,7 +93,7 @@ app.put('/api/pedidos/:id/status', (req, res) => {
 app.delete('/api/pedidos/:id', (req, res) => {
   db.get(`SELECT imagem FROM pedidos WHERE id = ?`, [req.params.id], (err, row) => {
     if (row && row.imagem) {
-      const imgPath = path.join(__dirname, 'uploads', row.imagem);
+      const imgPath = path.join(uploadsDir, row.imagem);
       if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
     }
     db.run(`DELETE FROM pedidos WHERE id = ?`, [req.params.id], function(err) {
@@ -94,5 +104,6 @@ app.delete('/api/pedidos/:id', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`✅ Servidor rodando na porta ${PORT}`);
+  console.log(`📁 Pasta uploads: ${uploadsDir}`);
 });
