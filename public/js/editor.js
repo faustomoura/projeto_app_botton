@@ -10,7 +10,6 @@ const btnFinalizar = document.getElementById('btn-finalizar');
 const produto = localStorage.getItem('produto_selecionado') || 'Botton Redondo';
 document.getElementById('titulo-produto').innerText = `Personalizar: ${produto}`;
 
-// Define formato inicial baseado no produto
 if (produto.toLowerCase().includes('quadrado')) {
   formato.value = 'quadrado';
   moldura.classList.remove('redondo');
@@ -24,11 +23,8 @@ if (produto.toLowerCase().includes('quadrado')) {
 upload.addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
-
   const reader = new FileReader();
-  reader.onload = (event) => {
-    previewImg.src = event.target.result;
-  };
+  reader.onload = (event) => { previewImg.src = event.target.result; };
   reader.readAsDataURL(file);
 });
 
@@ -50,18 +46,10 @@ formato.addEventListener('change', () => {
 
 btnFinalizar.addEventListener('click', async () => {
   const file = upload.files[0];
-  if (!file) {
-    alert('Envie uma imagem primeiro.');
-    return;
-  }
-
+  if (!file) { alert('Envie uma imagem primeiro.'); return; }
   const clienteNome = document.getElementById('cliente_nome').value.trim();
   const clienteTel = document.getElementById('cliente_telefone').value.trim();
-
-  if (!clienteNome || !clienteTel) {
-    alert('Preencha seu nome e telefone.');
-    return;
-  }
+  if (!clienteNome || !clienteTel) { alert('Preencha nome e telefone.'); return; }
 
   const formData = new FormData();
   formData.append('imagem', file);
@@ -73,20 +61,12 @@ btnFinalizar.addEventListener('click', async () => {
   formData.append('tamanho', document.getElementById('tamanho').value);
   formData.append('quantidade', document.getElementById('quantidade').value);
 
-  try {
-    const res = await fetch('/api/pedidos', {
-      method: 'POST',
-      body: formData
-    });
-
-    const data = await res.json();
-    if (data.id) {
-      alert(`Pedido enviado com sucesso! Código: #${data.id}\nAnote seu telefone para acompanhar.`);
-      window.location.href = '/carrinho.html';
-    } else {
-      alert('Erro ao enviar pedido: ' + (data.error || 'desconhecido'));
-    }
-  } catch (err) {
-    alert('Erro de conexão: ' + err.message);
+  const res = await fetch('/api/pedidos', { method: 'POST', body: formData });
+  const data = await res.json();
+  if (data.id) {
+    alert(`Pedido enviado! Código: #${data.id}`);
+    window.location.href = '/carrinho.html';
+  } else {
+    alert('Erro: ' + (data.error || 'desconhecido'));
   }
 });
