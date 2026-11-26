@@ -4,7 +4,116 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Meus Pedidos - AC Grafic</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+      --border: #cbd5e1;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    header { background: var(--primary); color: white; padding: 15px 0; }
+    header .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    header h1 { font-size: 28px; }
+    nav a { color: white; margin-left: 20px; text-decoration: none; font-weight: 500; padding: 6px 12px; border-radius: 6px; }
+    nav a:hover { background: rgba(255,255,255,0.2); }
+    h2 { margin: 30px 0 20px; }
+
+    #busca-area { display: flex; gap: 10px; margin-bottom: 30px; max-width: 500px; }
+    #busca-area input { flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; }
+    #busca-area button { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 500; }
+    #busca-area button:hover { background: var(--primary-dark); }
+
+    .pedido-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .botton-preview {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .botton-moldura {
+      background: #e2e8f0;
+      padding: 15px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .botton-moldura.redondo img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #2563eb;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .botton-moldura.quadrado img {
+      width: 150px;
+      height: 150px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 3px solid #2563eb;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .botton-info {
+      font-size: 12px;
+      color: #64748b;
+      text-align: center;
+    }
+
+    .pedido-detalhes { flex: 1; min-width: 250px; }
+    .pedido-detalhes h3 { color: var(--primary); margin-bottom: 10px; }
+    .pedido-detalhes p { margin: 6px 0; font-size: 14px; }
+    .pedido-detalhes strong { color: var(--text); }
+
+    .status {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      text-transform: uppercase;
+      font-weight: bold;
+      display: inline-block;
+    }
+    .status.recebido { background: #fef3c7; color: #92400e; }
+    .status.em_producao { background: #dbeafe; color: #1e40af; }
+    .status.pronto { background: #d1fae5; color: #065f46; }
+    .status.entregue { background: #e2e8f0; color: #475569; }
+
+    .msg-info {
+      padding: 30px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      text-align: center;
+      color: #64748b;
+    }
+
+    @media (max-width: 768px) {
+      header .container { flex-direction: column; gap: 10px; }
+      nav a { margin: 0 5px; }
+      .pedido-card { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -19,37 +128,57 @@
   </header>
 
   <main class="container">
-    <h2>Meus Pedidos</h2>
+    <h2>📦 Meus Pedidos</h2>
+
     <div id="busca-area">
-      <input type="text" id="tel-busca" placeholder="Digite seu telefone">
-      <button onclick="buscarPedidos()">Buscar</button>
+      <input type="text" id="tel-busca" placeholder="Digite seu telefone para buscar">
+      <button onclick="buscarPedidos()">🔍 Buscar</button>
     </div>
-    <div id="lista-pedidos-cliente"></div>
+
+    <div id="lista-pedidos-cliente">
+      <p class="msg-info">Digite seu telefone para ver seus pedidos.</p>
+    </div>
   </main>
 
   <script>
     async function buscarPedidos() {
       const telefone = document.getElementById('tel-busca').value.trim();
       if (!telefone) { alert('Digite seu telefone'); return; }
+
       const res = await fetch('/api/pedidos');
       const pedidos = await res.json();
       const meus = pedidos.filter(p => p.cliente_telefone === telefone);
+
       const div = document.getElementById('lista-pedidos-cliente');
+
       if (meus.length === 0) {
-        div.innerHTML = '<p>Nenhum pedido encontrado.</p>';
+        div.innerHTML = '<p class="msg-info">Nenhum pedido encontrado para este telefone.</p>';
         return;
       }
-      div.innerHTML = meus.map(p => `
-        <div class="pedido-card">
-          <img src="/uploads/${p.imagem}" alt="Pedido">
-          <div>
-            <p><strong>${p.produto}</strong> - ${p.formato} - ${p.tamanho}</p>
-            <p>Quantidade: ${p.quantidade}</p>
-            <p>Barraca: ${p.barraca}</p>
-            <p>Status: <span class="status ${p.status}">${p.status}</span></p>
+
+      div.innerHTML = meus.map(p => {
+        const classeFormato = p.formato === 'redondo' ? 'redondo' : 'quadrado';
+        return `
+          <div class="pedido-card">
+            <div class="botton-preview">
+              <div class="botton-moldura ${classeFormato}">
+                <img src="/uploads/${p.imagem}" alt="${p.produto}">
+              </div>
+              <div class="botton-info">
+                📐 ${p.tamanho} cm • ${p.formato}
+              </div>
+            </div>
+            <div class="pedido-detalhes">
+              <h3>${p.produto}</h3>
+              <p><strong>Formato:</strong> ${p.formato}</p>
+              <p><strong>Tamanho:</strong> ${p.tamanho} cm</p>
+              <p><strong>Quantidade:</strong> ${p.quantidade}</p>
+              <p><strong>Barraca:</strong> ${p.barraca}</p>
+              <p><strong>Status:</strong> <span class="status ${p.status}">${p.status.replace('_', ' ')}</span></p>
+            </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
   </script>
 </body>
