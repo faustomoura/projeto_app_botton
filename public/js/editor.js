@@ -3,11 +3,12 @@ const previewImg = document.getElementById('preview-img');
 const formato = document.getElementById('formato');
 const moldura = document.getElementById('moldura');
 const btnFinalizar = document.getElementById('btn-finalizar');
+const btnReset = document.getElementById('btn-reset');
+const zoomSlider = document.getElementById('zoom-slider');
 
 const produto = localStorage.getItem('produto_selecionado') || 'Botton Redondo';
 document.getElementById('titulo-produto').innerText = `Personalizar: ${produto}`;
 
-// Define formato inicial
 if (produto.toLowerCase().includes('quadrado')) {
   formato.value = 'quadrado';
   moldura.classList.remove('redondo');
@@ -18,38 +19,32 @@ if (produto.toLowerCase().includes('quadrado')) {
   moldura.classList.add('redondo');
 }
 
-// Estado da imagem
-let imageState = {
-  x: 0,
-  y: 0,
-  scale: 1,
-  isDragging: false,
-  startX: 0,
-  startY: 0,
-  initialX: 0,
-  initialY: 0
-};
+let imageState = { x: 0, y: 0, scale: 1, isDragging: false, startX: 0, startY: 0 };
+let imagemOriginal = null; // Guarda a imagem carregada em memória
 
-// Carregar imagem
 upload.addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = (event) => {
-    previewImg.src = event.target.result;
-    // Reset posição ao carregar nova imagem
-    imageState = { x: 0, y: 0, scale: 1, isDragging: false, startX: 0, startY: 0, initialX: 0, initialY: 0 };
-    atualizarTransform();
+    const img = new Image();
+    img.onload = () => {
+      imagemOriginal = img;
+      previewImg.src = event.target.result;
+      imageState = { x: 0, y: 0, scale: 1, isDragging: false, startX: 0, startY: 0 };
+      zoomSlider.value = 1;
+      atualizarTransform();
+    };
+    img.src = event.target.result;
   };
   reader.readAsDataURL(file);
 });
 
-// Atualizar transformação da imagem
 function atualizarTransform() {
   previewImg.style.transform = `translate(${imageState.x}px, ${imageState.y}px) scale(${imageState.scale})`;
 }
 
-// ========== DRAG & DROP (Mouse) ==========
+// DRAG - Mouse
 moldura.addEventListener('mousedown', (e) => {
   if (!previewImg.src) return;
   imageState.isDragging = true;
@@ -66,13 +61,11 @@ document.addEventListener('mousemove', (e) => {
   atualizarTransform();
 });
 
-document.addEventListener('mouseup', () => {
-  imageState.isDragging = false;
-});
+document.addEventListener('mouseup', () => { imageState.isDragging = false; });
 
-// ========== DRAG & DROP (Touch - Mobile) ==========
+// DRAG - Touch
 moldura.addEventListener('touchstart', (e) => {
-  if (!previewImg.src) return;
+  if (!previewImg.src || e.touches.length !== 1) return;
   const touch = e.touches[0];
   imageState.isDragging = true;
   imageState.startX = touch.clientX - imageState.x;
@@ -80,97 +73,120 @@ moldura.addEventListener('touchstart', (e) => {
 }, { passive: true });
 
 moldura.addEventListener('touchmove', (e) => {
-  if (!imageState.isDragging) return;
+  if (!imageState.isDragging || e.touches.length !== 1) return;
   const touch = e.touches[0];
   imageState.x = touch.clientX - imageState.startX;
   imageState.y = touch.clientY - imageState.startY;
   atualizarTransform();
 }, { passive: true });
 
-moldura.addEventListener('touchend', () => {
-  imageState.isDragging = false;
-});
+moldura.addEventListener('touchend', () => { imageState.isDragging = false; });
 
-// ========== ZOOM (Scroll do mouse) ==========
+// ZOOM - Scroll
 moldura.addEventListener('wheel', (e) => {
   if (!previewImg.src) return;
   e.preventDefault();
   const delta = e.deltaY > 0 ? -0.1 : 0.1;
   imageState.scale = Math.max(0.3, Math.min(5, imageState.scale + delta));
+  zoomSlider.value = imageState.scale;
   atualizarTransform();
 }, { passive: false });
 
-// ========== ZOOM (Pinch - Mobile) ==========
-let initialPinchDistance = 0;
-let initialScale = 1;
+zoomSlider.addEventListener('input', (e) => {
+  imageState.scale = parseFloat(e.target.value);
+  atualizarTransform();
+});
 
-moldura.addEventListener('touchstart', (e) => {
-  if (e.touches.length === 2) {
-    initialPinchDistance = Math.hypot(
-      e.touches[0].clientX - e.touches[1].clientX,
-      e.touches[0].clientY - e.touches[1].clientY
-    );
-    initialScale = imageState.scale;
-  }
-}, { passive: true });
+btnReset.addEventListener('click', () => {
+  imageState.x = 0;
+  imageState.y = 0;
+  imageState.scale = 1;
+  zoomSlider.value = 1;
+  atualizarTransform();
+});
 
-moldura.addEventListener('touchmove', (e) => {
-  if (e.touches.length === 2) {
-    e.preventDefault();
-    const currentDistance = Math.hypot(
-      e.touches[0].clientX - e.touches[1].clientX,
-      e.touches[0].clientY - e.touches[1].clientY
-    );
-    const scale = initialScale * (currentDistance / initialPinchDistance);
-    imageState.scale = Math.max(0.3, Math.min(5, scale));
-    atualizarTransform();
-  }
-}, { passive: false });
-
-// ========== CONTROLES MANUAIS (opcional) ==========
-// Botões de zoom fino
-function criarControlesZoom() {
-  const controles = document.querySelector('.controles');
-  
-  const zoomLabel = document.createElement('label');
-  zoomLabel.innerText = 'Zoom:';
-  controles.appendChild(zoomLabel);
-  
-  const zoomSlider = document.createElement('input');
-  zoomSlider.type = 'range';
-  zoomSlider.min = '0.3';
-  zoomSlider.max = '5';
-  zoomSlider.step = '0.1';
-  zoomSlider.value = '1';
-  zoomSlider.addEventListener('input', (e) => {
-    imageState.scale = parseFloat(e.target.value);
-    atualizarTransform();
-  });
-  controles.appendChild(zoomSlider);
-  
-  const resetBtn = document.createElement('button');
-  resetBtn.innerText = '🔄 Resetar Posição';
-  resetBtn.style.marginTop = '10px';
-  resetBtn.style.background = '#64748b';
-  resetBtn.addEventListener('click', () => {
-    imageState.x = 0;
-    imageState.y = 0;
-    imageState.scale = 1;
-    zoomSlider.value = '1';
-    atualizarTransform();
-  });
-  controles.appendChild(resetBtn);
-}
-
-criarControlesZoom();
-
-// Formato
 formato.addEventListener('change', () => {
   moldura.classList.remove('redondo', 'quadrado');
   moldura.classList.add(formato.value);
 });
 
-// Finalizar pedido
+// =====================================================
+// 🎯 FUNÇÃO MÁGICA: Recorta a imagem no formato/tamanho real
+// =====================================================
+function recortarImagem() {
+  return new Promise((resolve, reject) => {
+    if (!imagemOriginal) {
+      reject(new Error('Nenhuma imagem carregada'));
+      return;
+    }
+
+    // Tamanhos em pixels a 300 DPI (qualidade de impressão)
+    const tamanhos = {
+      '3x3': 354,     // 3,0 cm
+      '3.5x3.5': 413, // 3,5 cm
+      '4x4': 472,     // 4,0 cm
+      '5x5': 591      // 5,0 cm
+    };
+
+    const tamanhoSelecionado = document.getElementById('tamanho').value;
+    const tamanhoPx = tamanhos[tamanhoSelecionado] || 354;
+    const formatoSelecionado = formato.value;
+
+    // Criar canvas do tamanho real do produto
+    const canvas = document.createElement('canvas');
+    canvas.width = tamanhoPx;
+    canvas.height = tamanhoPx;
+    const ctx = canvas.getContext('2d');
+
+    // Fundo branco
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, tamanhoPx, tamanhoPx);
+
+    // Se for redondo, criar máscara circular
+    if (formatoSelecionado === 'redondo') {
+      ctx.beginPath();
+      ctx.arc(tamanhoPx / 2, tamanhoPx / 2, tamanhoPx / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+    }
+
+    // Calcular como a imagem aparece na moldura (350x350px na tela)
+    const molduraSize = 350;
+    const img = imagemOriginal;
+
+    // Escala da imagem para caber na moldura (contain)
+    const scaleToFit = Math.min(molduraSize / img.width, molduraSize / img.height);
+    const imgDisplayWidth = img.width * scaleToFit;
+    const imgDisplayHeight = img.height * scaleToFit;
+
+    // Posição da imagem na moldura (centralizada + offset do usuário)
+    const imgX = (molduraSize - imgDisplayWidth) / 2 + imageState.x;
+    const imgY = (molduraSize - imgDisplayHeight) / 2 + imageState.y;
+
+    // Fator de escala entre a moldura (350px) e o canvas real
+    const factor = tamanhoPx / molduraSize;
+    const finalScale = scaleToFit * imageState.scale * factor;
+
+    // Desenhar imagem no canvas com as transformações aplicadas
+    const drawWidth = img.width * finalScale;
+    const drawHeight = img.height * finalScale;
+    const drawX = (tamanhoPx - drawWidth) / 2 + imageState.x * factor;
+    const drawY = (tamanhoPx - drawHeight) / 2 + imageState.y * factor;
+
+    ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+
+    // Converter para Blob e resolver
+    canvas.toBlob((blob) => {
+      if (blob) {
+        resolve(new File([blob], 'boton.png', { type: 'image/png' }));
+      } else {
+        reject(new Error('Erro ao gerar imagem'));
+      }
+    }, 'image/png', 0.95);
+  });
+}
+
+// FINALIZAR PEDIDO - agora envia a imagem recortada
 btnFinalizar.addEventListener('click', async () => {
   const file = upload.files[0];
   if (!file) { alert('Envie uma imagem primeiro.'); return; }
@@ -178,22 +194,35 @@ btnFinalizar.addEventListener('click', async () => {
   const clienteTel = document.getElementById('cliente_telefone').value.trim();
   if (!clienteNome || !clienteTel) { alert('Preencha nome e telefone.'); return; }
 
-  const formData = new FormData();
-  formData.append('imagem', file);
-  formData.append('cliente_nome', clienteNome);
-  formData.append('cliente_telefone', clienteTel);
-  formData.append('barraca', document.getElementById('barraca').value);
-  formData.append('produto', produto);
-  formData.append('formato', formato.value);
-  formData.append('tamanho', document.getElementById('tamanho').value);
-  formData.append('quantidade', document.getElementById('quantidade').value);
+  btnFinalizar.disabled = true;
+  btnFinalizar.innerText = '⏳ Processando...';
 
-  const res = await fetch('/api/pedidos', { method: 'POST', body: formData });
-  const data = await res.json();
-  if (data.id) {
-    alert(`Pedido enviado! Código: #${data.id}`);
-    window.location.href = '/carrinho.html';
-  } else {
-    alert('Erro: ' + (data.error || 'desconhecido'));
+  try {
+    // Recortar a imagem no formato/tamanho real
+    const imagemRecortada = await recortarImagem();
+
+    const formData = new FormData();
+    formData.append('imagem', imagemRecortada); // Envia a imagem JÁ RECORTADA
+    formData.append('cliente_nome', clienteNome);
+    formData.append('cliente_telefone', clienteTel);
+    formData.append('barraca', document.getElementById('barraca').value);
+    formData.append('produto', produto);
+    formData.append('formato', formato.value);
+    formData.append('tamanho', document.getElementById('tamanho').value);
+    formData.append('quantidade', document.getElementById('quantidade').value);
+
+    const res = await fetch('/api/pedidos', { method: 'POST', body: formData });
+    const data = await res.json();
+    if (data.id) {
+      alert(`Pedido enviado! Código: #${data.id}`);
+      window.location.href = '/carrinho.html';
+    } else {
+      alert('Erro: ' + (data.error || 'desconhecido'));
+    }
+  } catch (err) {
+    alert('Erro ao processar: ' + err.message);
+  } finally {
+    btnFinalizar.disabled = false;
+    btnFinalizar.innerText = '✅ Finalizar Pedido';
   }
 });
