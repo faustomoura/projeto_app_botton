@@ -1,13 +1,11 @@
 async function carregarPedidos() {
   const res = await fetch('/api/pedidos');
   const pedidos = await res.json();
-
   const div = document.getElementById('pedidos-painel');
   if (pedidos.length === 0) {
-    div.innerHTML = '<p class="msg-info">Nenhum pedido recebido.</p>';
+    div.innerHTML = '<p>Nenhum pedido recebido.</p>';
     return;
   }
-
   div.innerHTML = pedidos.map(p => `
     <div class="pedido-card">
       <img src="/uploads/${p.imagem}" alt="Pedido">
@@ -41,10 +39,10 @@ async function atualizarStatus(id, status) {
 }
 
 async function excluirPedido(id) {
-  if (!confirm('Tem certeza que deseja excluir?')) return;
+  if (!confirm('Excluir pedido?')) return;
   await fetch(`/api/pedidos/${id}`, { method: 'DELETE' });
   carregarPedidos();
 }
 
 carregarPedidos();
-setInterval(carregarPedidos, 10000); // Atualiza a cada 10 segundos
+setInterval(carregarPedidos, 10000);
