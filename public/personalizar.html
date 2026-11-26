@@ -117,7 +117,7 @@
   </header>
 
   <main class="container">
-    <h2 id="titulo-produto">Personalizar <!--prod tipo--></h2>
+    <h2 id="titulo-produto">Personalizar</h2>
 
     <div class="editor">
       <div class="canvas-area">
@@ -183,16 +183,17 @@
 
   <script>
     const CART_KEY = 'carrinho_acgrafic';
+    const MAX_IMG = 800; // tamanho máximo da imagem comprimida
 
     // ========== ESTADO DO EDITOR ==========
-    let posX = 0, posY = 0, zoom = 1, imgBlob = null, imgDataUrl = null;
+    let posX = 0, posY = 0, zoom = 1, imgDataUrl = null;
     const moldura = document.getElementById('moldura');
     const previewImg = document.getElementById('preview-img');
 
     // ========== CARREGAR PRODUTO SELECIONADO ==========
     const produtoSelecionado = localStorage.getItem('produto_selecionado') || 'Botton Redondo';
-    document.getElementById('titulo-produto').innerHTML = 'Personalizar ' + produtoSelecionado;
-    if (produtoSelecionado.includes('Quadrado') || produtoSelecionado.includes('Imã Quadrado')) {
+    document.getElementById('titulo-produto').textContent = 'Personalizar ' + produtoSelecionado;
+    if (produtoSelecionado.includes('Quadrado')) {
       moldura.classList.remove('redondo');
       moldura.classList.add('quadrado');
       document.getElementById('formato').value = 'quadrado';
@@ -229,18 +230,44 @@
       saveCart(cart);
     }
 
-    // ========== UPLOAD ==========
+    // ========== UPLOAD COM COMPRESSÃO ==========
     document.getElementById('upload').addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        imgDataUrl = ev.target.result;
+      comprimirImagem(file).then((comprimida) => {
+        imgDataUrl = comprimida;
         previewImg.src = imgDataUrl;
         resetPosicao();
-      };
-      reader.readAsDataURL(file);
+        const status = document.getElementById('item-status');
+        status.style.display = 'block';
+        status.textContent = '✅ Imagem otimizada (' + Math.round((file.size - base64Size(comprimida)) / file.size * 100) + '% menor)';
+      });
     });
+
+    function base64Size(dataUrl) {
+      return Math.round((dataUrl.length - (dataUrl.indexOf(',') + 1)) * 3 / 4);
+    }
+
+    function comprimirImagem(file) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const reader = new FileReader();
+        reader.onload = (ev) => { img.src = ev.target.result; };
+        img.onload = () => {
+          let { width, height } = img;
+          const scale = Math.min(1, MAX_IMG / Math.max(width, height));
+          width = Math.round(width * scale);
+          height = Math.round(height * scale);
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.7));
+        };
+        img.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
 
     // ========== FORMATA/DRAG/ZOOM ==========
     const formatoSel = document.getElementById('formato');
@@ -280,8 +307,9 @@
     // ========== CRIAR ITEM ==========
     function buildItem() {
       const format = formatoSel.value;
-      let nome = format === 'redondo' ? (produtoSelecionado.includes('Imã') ? 'Imã Redondo' : 'Botton Redondo')
-                                      : (produtoSelecionado.includes('Imã') ? 'Imã Quadrado' : 'Botton Quadrado');
+      let nome = format === 'redondo'
+        ? (produtoSelecionado.includes('Imã') ? 'Imã Redondo' : 'Botton Redondo')
+        : (produtoSelecionado.includes('Imã') ? 'Imã Quadrado' : 'Botton Quadrado');
       return {
         produto: nome,
         formato: format,
@@ -297,11 +325,7 @@
       const status = document.getElementById('item-status');
       if (!item.imagem) { status.style.display = 'block'; status.textContent = '❌ Envie uma imagem primeiro.'; return false; }
       if (!item.cliente_nome) { status.style.display = 'block'; status.textContent = '❌ Informe seu nome.'; return false; }
-      if (/^\(\d{2}\) \d{4,5}-\d{4}$/.test(item.cliente_telefone) || item.cliente_telefone.length >= 8) {
-        if (item.cliente_telefone.length < 8) { status.style.display = 'block'; status.textContent = '❌ Telefone inválido.'; return false; }
-      } else {
-        status.style.display = 'block'; status.textContent = '❌ Telefone inválido. Use (XX) XXXXX-XXXX.'; return false;
-      }
+      if (item.cliente_telefone.length < 8) { status.style.display = 'block'; status.textContent = '❌ Telefone inválido. Use (XX) XXXXX-XXXX.'; return false; }
       status.style.display = 'none';
       return true;
     }
@@ -313,12 +337,11 @@
       const cart = getCart();
       cart.push(item);
       saveCart(cart);
-      document.getElementById('item-status').style.display = 'block';
-      document.getElementById('item-status').textContent = '✅ Adicionado ao carrinho! Escolha outro produto.';
+      localStorage.removeItem('produto_selecionado');
       window.location.href = '/';
     });
 
-    // ========== FINALIZAR (envia cada item individualmente) ==========
+    // ========== FINALIZAR (envio individual por item) ==========
     document.getElementById('btn-finalizar').addEventListener('click', async () => {
       const item = buildItem();
       if (!validar(item)) return;
@@ -330,41 +353,31 @@
 
       const btn = document.getElementById('btn-finalizar');
       btn.disabled = true;
-      btn.textContent = '⏳ Enviando ' + cart.length + ' item(ns)...';
+      btn.textContent = '⏳ Enviando...';
 
-      // Envia UM pedido por requisição, no formato que o backend já entende.
-      // Assim redondo + quadrado (e qualquer quantidade) passam juntos,
-      // sem estourar o limite de tamanho do servidor.
-      let ok = 0, falha = 0;
-      for (let i = 0; i < cart.length; i++) {
-        const c = cart[i];
+      let sucesso = 0, falha = 0;
+
+      // Envia UM pedido por vez (payload pequeno, sem erro 413)
+      for (const pedido of cart) {
         try {
           const res = await fetch('/api/pedidos', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              produto: c.produto,
-              formato: c.formato,
-              tamanho: c.tamanho,
-              quantidade: c.quantidade,
-              barraca: c.barraca,
-              cliente_nome: c.cliente_nome,
-              cliente_telefone: c.cliente_telefone,
-              imagem: c.imagem
-            })
+            body: JSON.stringify(pedido) // formato simples: um pedido individual
           });
-          if (res.ok) ok++; else falha++;
-        } catch (err) { falha++; }
+          if (res.ok) { sucesso++; } else { falha++; }
+        } catch (e) { falha++; }
       }
 
       if (falha === 0) {
         localStorage.removeItem(CART_KEY);
-        localStorage.removeItem('produto_selecionado');
-        alert('✅ Pedido realizado! ' + ok + ' item(ns) enviado(s) com sucesso.');
+        alert('✅ Pedido realizado com sucesso! (' + sucesso + ' item(ns) enviados)');
+        window.location.href = '/carrinho.html';
+      } else if (sucesso > 0) {
+        alert('⚠️ ' + sucesso + ' enviado(s), ' + falha + ' falhou(ram). Você pode tentar novamente os que ficaram.');
         window.location.href = '/carrinho.html';
       } else {
-        localStorage.removeItem(CART_KEY);
-        alert('⚠️ ' + ok + ' enviado(s), ' + falha + ' falharam. Os que falharam tente novamente.');
+        alert('❌ Erro ao enviar pedido. Tente novamente.');
         btn.disabled = false;
         btn.textContent = '✅ Finalizar Pedido';
       }
