@@ -13,137 +13,92 @@
       --text: #1e293b;
       --border: #cbd5e1;
       --danger: #dc2626;
+      --green: #10b981;
     }
-
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-
     body { background: var(--bg); color: var(--text); min-height: 100vh; }
-
     .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-
     header { background: var(--primary); color: white; padding: 15px 0; }
     header .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
     header h1 { font-size: 28px; }
-    nav a { color: white; margin-left: 20px; text-decoration: none; font-weight: 500; padding: 6px 12px; border-radius: 6px; }
+    nav { display: flex; align-items: center; gap: 10px; }
+    nav a { color: white; margin-left: 8px; text-decoration: none; font-weight: 500; padding: 6px 12px; border-radius: 6px; }
     nav a:hover { background: rgba(255,255,255,0.2); }
-
-    h2 { margin: 30px 0 20px; color: var(--text); }
-
-    .editor {
-      display: grid;
-      grid-template-columns: 1fr 350px;
-      gap: 30px;
-      align-items: start;
+    .cart-badge {
+      background: white;
+      color: var(--primary);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-weight: 700;
+      font-size: 14px;
     }
+    h2 { margin: 10px 0 20px; color: var(--text); }
+
+    .editor { display: grid; grid-template-columns: 1fr 350px; gap: 30px; align-items: start; }
 
     .canvas-area {
-      background: #e2e8f0;
-      min-height: 500px;
-      border-radius: 12px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 30px;
-      position: relative;
+      background: #e2e8f0; min-height: 500px; border-radius: 12px;
+      display: flex; justify-content: center; align-items: center;
+      padding: 30px; position: relative;
     }
-
     .moldura {
-      width: 350px;
-      height: 350px;
-      overflow: hidden;
-      position: relative;
-      background: #fff;
-      border: 4px dashed #2563eb;
-      cursor: grab;
-      touch-action: none;
-      user-select: none;
+      width: 350px; height: 350px; overflow: hidden; position: relative;
+      background: #fff; border: 4px dashed #2563eb; cursor: grab;
+      touch-action: none; user-select: none;
     }
-
     .moldura:active { cursor: grabbing; }
-
     .moldura.redondo { border-radius: 50%; }
     .moldura.quadrado { border-radius: 12px; }
-
     .moldura img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      pointer-events: none;
-      transform-origin: center center;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      object-fit: contain; pointer-events: none; transform-origin: center center;
     }
-
     .editor-hint {
-      position: absolute;
-      bottom: 15px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.8);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 13px;
-      pointer-events: none;
+      position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.8); color: white; padding: 8px 16px;
+      border-radius: 20px; font-size: 13px; pointer-events: none;
     }
 
     .controles {
-      background: var(--card);
-      padding: 20px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      background: var(--card); padding: 20px; border-radius: 12px;
+      border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px;
     }
-
-    .controles label {
-      font-weight: 600;
-      font-size: 14px;
-      color: var(--text);
-    }
-
+    .controles label { font-weight: 600; font-size: 14px; color: var(--text); }
     .controles input, .controles select {
-      padding: 10px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 14px;
-      width: 100%;
+      padding: 10px; border: 1px solid var(--border); border-radius: 6px;
+      font-size: 14px; width: 100%;
     }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 500;
-      width: 100%;
-      margin-top: 10px;
-    }
-
+    .btn { border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; width: 100%; color: white; }
+    .btn-primary { background: var(--primary); }
     .btn-primary:hover { background: var(--primary-dark); }
-
-    .btn-reset {
-      background: #64748b;
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      width: 100%;
-    }
-
+    .btn-green { background: var(--green); }
+    .btn-green:hover { background: #059669; }
+    .btn-reset { background: #64748b; }
     .btn-reset:hover { background: #475569; }
+
+    .item-status {
+      background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px;
+      padding: 10px 12px; font-size: 13px; color: #065f46;
+    }
+    .btn-continuar { background: var(--primary); }
+    .btn-continuar:hover { background: var(--primary-dark); }
+
+    .carrinho-box {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px; margin-top: 30px;
+    }
+    .carrinho-box h3 { margin-bottom: 10px; font-size: 18px; }
+    .carrinho-item {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #f1f5f9; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; font-size: 14px;
+    }
+    .carrinho-item .tipo { font-weight: 700; color: var(--primary); }
+    .carrinho-item .remover { background: var(--danger); color: white; border: none; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 12px; }
+    .msg-info { color: #64748b; font-size: 14px; }
 
     @media (max-width: 768px) {
       .editor { grid-template-columns: 1fr; }
       header .container { flex-direction: column; gap: 10px; }
-      nav a { margin: 0 5px; }
       .moldura { width: 280px; height: 280px; }
     }
   </style>
@@ -154,6 +109,7 @@
       <h1>🎨 AC Grafic</h1>
       <nav>
         <a href="/">Início</a>
+        <span class="cart-badge" id="nav-cart">🛒 <span id="nav-cart-count">0</span></span>
         <a href="/carrinho.html">Meus Pedidos</a>
         <a href="/painel.html">Painel da Barraca</a>
       </nav>
@@ -161,7 +117,7 @@
   </header>
 
   <main class="container">
-    <h2 id="titulo-produto">Personalizar</h2>
+    <h2 id="titulo-produto">Personalizar <!--prod tipo--></h2>
 
     <div class="editor">
       <div class="canvas-area">
@@ -208,13 +164,194 @@
         <label>🔍 Zoom:</label>
         <input type="range" id="zoom-slider" min="0.3" max="5" step="0.1" value="1">
 
-        <button id="btn-reset" class="btn-reset">🔄 Resetar Posição</button>
+        <button id="btn-reset" class="btn btn-reset">🔄 Resetar Posição</button>
 
-        <button id="btn-finalizar" class="btn-primary">✅ Finalizar Pedido</button>
+        <div class="item-status" id="item-status" style="display:none;"></div>
+
+        <button id="btn-continuar" class="btn btn-continuar">🛒 Adicionar + Continuar Comprando</button>
+        <button id="btn-finalizar" class="btn btn-primary">✅ Finalizar Pedido</button>
+      </div>
+    </div>
+
+    <div class="carrinho-box">
+      <h3>🛒 Meu Carrinho <span id="cart-total" style="font-size:14px; color:#64748b;"></span></h3>
+      <div id="cart-items">
+        <p class="msg-info">Nenhum item adicionado ainda. Continue comprando para montar seu pedido.</p>
       </div>
     </div>
   </main>
 
-  <script src="/js/editor.js?v=2"></script>
+  <script>
+    const CART_KEY = 'carrinho_acgrafic';
+
+    // ========== ESTADO DO EDITOR ==========
+    let posX = 0, posY = 0, zoom = 1, imgBlob = null, imgDataUrl = null;
+    const moldura = document.getElementById('moldura');
+    const previewImg = document.getElementById('preview-img');
+
+    // ========== CARREGAR PRODUTO SELECIONADO ==========
+    const produtoSelecionado = localStorage.getItem('produto_selecionado') || 'Botton Redondo';
+    document.getElementById('titulo-produto').innerHTML = 'Personalizar ' + produtoSelecionado;
+    if (produtoSelecionado.includes('Quadrado') || produtoSelecionado.includes('Imã Quadrado')) {
+      moldura.classList.remove('redondo');
+      moldura.classList.add('quadrado');
+      document.getElementById('formato').value = 'quadrado';
+    }
+
+    // ========== CARRINHO (localStorage) ==========
+    function getCart() {
+      try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch (e) { return []; }
+    }
+    function saveCart(cart) { localStorage.setItem(CART_KEY, JSON.stringify(cart)); atualizarCarrinho(); }
+    function atualizarCarrinho() {
+      const cart = getCart();
+      const count = cart.reduce((s, i) => s + Number(i.quantidade || 1), 0);
+      document.getElementById('nav-cart-count').textContent = count;
+      document.getElementById('cart-total').textContent = cart.length ? '(' + cart.length + ' item(ns))' : '';
+      const box = document.getElementById('cart-items');
+      if (!cart.length) {
+        box.innerHTML = '<p class="msg-info">Nenhum item adicionado ainda. Continue comprando para montar seu pedido.</p>';
+        return;
+      }
+      box.innerHTML = cart.map((item, idx) => `
+        <div class="carrinho-item">
+          <div>
+            <span class="tipo">${item.produto}</span><br>
+            <span>${item.formato === 'redondo' ? 'Redondo' : 'Quadrado'} • ${item.tamanho} cm • qtd ${item.quantidade}</span>
+          </div>
+          <button class="remover" onclick="removerItem(${idx})">✕ Remover</button>
+        </div>
+      `).join('');
+    }
+    function removerItem(idx) {
+      const cart = getCart();
+      cart.splice(idx, 1);
+      saveCart(cart);
+    }
+
+    // ========== UPLOAD ==========
+    document.getElementById('upload').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        imgDataUrl = ev.target.result;
+        previewImg.src = imgDataUrl;
+        resetPosicao();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ========== FORMATA/DRAG/ZOOM ==========
+    const formatoSel = document.getElementById('formato');
+    formatoSel.addEventListener('change', () => {
+      moldura.classList.toggle('redondo', formatoSel.value === 'redondo');
+      moldura.classList.toggle('quadrado', formatoSel.value === 'quadrado');
+    });
+
+    let dragging = false, startX, startY;
+    moldura.addEventListener('mousedown', (e) => { dragging = true; startX = e.clientX - posX; startY = e.clientY - posY; });
+    moldura.addEventListener('touchstart', (e) => { if (e.touches.length === 1) { dragging = true; startX = e.touches[0].clientX - posX; startY = e.touches[0].clientY - posY; } }, { passive: true });
+    window.addEventListener('mousemove', (e) => { if (dragging) { posX = e.clientX - startX; posY = e.clientY - startY; aplicarTransform(); } });
+    window.addEventListener('touchmove', (e) => { if (dragging && e.touches.length === 1) { posX = e.touches[0].clientX - startX; posY = e.touches[0].clientY - startY; aplicarTransform(); } }, { passive: true });
+    window.addEventListener('mouseup', () => { dragging = false; });
+    window.addEventListener('touchend', () => { dragging = false; });
+
+    moldura.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      zoom = Math.min(5, Math.max(0.3, zoom - e.deltaY * 0.001));
+      document.getElementById('zoom-slider').value = zoom;
+      aplicarTransform();
+    }, { passive: false });
+
+    const zoomSlider = document.getElementById('zoom-slider');
+    zoomSlider.addEventListener('input', () => { zoom = parseFloat(zoomSlider.value); aplicarTransform(); });
+
+    function aplicarTransform() {
+      previewImg.style.transform = `translate(${posX}px, ${posY}px) scale(${zoom})`;
+    }
+    function resetPosicao() {
+      posX = 0; posY = 0; zoom = 1;
+      document.getElementById('zoom-slider').value = 1;
+      aplicarTransform();
+    }
+    document.getElementById('btn-reset').addEventListener('click', resetPosicao);
+
+    // ========== CRIAR ITEM ==========
+    function buildItem() {
+      const format = formatoSel.value;
+      // Produto compatível com o selecionado, mas respeitando o formato do editor
+      let nome = format === 'redondo' ? (produtoSelecionado.includes('Imã') ? 'Imã Redondo' : 'Botton Redondo')
+                                      : (produtoSelecionado.includes('Imã') ? 'Imã Quadrado' : 'Botton Quadrado');
+      return {
+        produto: nome,
+        formato: format,
+        tamanho: document.getElementById('tamanho').value,
+        quantidade: parseFloat(document.getElementById('quantidade').value) || 1,
+        barraca: document.getElementById('barraca').value,
+        cliente_nome: document.getElementById('cliente_nome').value.trim(),
+        cliente_telefone: document.getElementById('cliente_telefone').value.trim(),
+        imagem: imgDataUrl
+      };
+    }
+    function validar(item) {
+      const status = document.getElementById('item-status');
+      if (!item.imagem) { status.style.display = 'block'; status.textContent = '❌ Envie uma imagem primeiro.'; return false; }
+      if (!item.cliente_nome) { status.style.display = 'block'; status.textContent = '❌ Informe seu nome.'; return false; }
+      if (/^\(\d{2}\) \d{4,5}-\d{4}$/.test(item.cliente_telefone) || item.cliente_telefone.length >= 8) {
+        if (item.cliente_telefone.length < 8) { status.style.display = 'block'; status.textContent = '❌ Telefone inválido.'; return false; }
+      } else {
+        status.style.display = 'block'; status.textContent = '❌ Telefone inválido. Use (XX) XXXXX-XXXX.'; return false;
+      }
+      status.style.display = 'none';
+      return true;
+    }
+
+    // ========== CONTINUAR COMPRANDO ==========
+    document.getElementById('btn-continuar').addEventListener('click', () => {
+      const item = buildItem();
+      if (!validar(item)) return;
+      const cart = getCart();
+      cart.push(item);
+      saveCart(cart);
+      document.getElementById('item-status').style.display = 'block';
+      document.getElementById('item-status').textContent = '✅ Adicionado ao carrinho! Escolha outro produto.';
+      window.location.href = '/';
+    });
+
+    // ========== FINALIZAR ==========
+    document.getElementById('btn-finalizar').addEventListener('click', async () => {
+      const item = buildItem();
+      if (!validar(item)) return;
+      const cart = getCart();
+      cart.push(item);
+
+      if (!cart.length) { alert('Seu carrinho está vazio.'); return; }
+
+      const btn = document.getElementById('btn-finalizar');
+      btn.disabled = true;
+      btn.textContent = '⏳ Enviando...';
+
+      try {
+        const res = await fetch('/api/pedidos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ itens: cart })
+        });
+        if (!res.ok) throw new Error('Erro no servidor');
+        localStorage.removeItem(CART_KEY);
+        localStorage.removeItem('produto_selecionado');
+        alert('✅ Pedido realizado com sucesso! (n° total de itens: ' + cart.length + ')');
+        window.location.href = '/carrinho.html';
+      } catch (err) {
+        alert('❌ Erro ao enviar pedido. Tente novamente.');
+        btn.disabled = false;
+        btn.textContent = '✅ Finalizar Pedido';
+      }
+    });
+
+    // Inicializa
+    atualizarCarrinho();
+  </script>
 </body>
 </html>
