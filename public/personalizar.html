@@ -355,31 +355,43 @@
       btn.disabled = true;
       btn.textContent = '⏳ Enviando...';
 
-      let sucesso = 0, falha = 0;
-
-      // Envia UM pedido por vez (payload pequeno, sem erro 413)
-      for (const pedido of cart) {
-        try {
-          const res = await fetch('/api/pedidos', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(pedido) // formato simples: um pedido individual
-          });
-          if (res.ok) { sucesso++; } else { falha++; }
-        } catch (e) { falha++; }
-      }
-
-      if (falha === 0) {
+      // Envia UM único pedido com todos os itens do carrinho
+      try {
+        const res = await fetch('/api/pedidos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ itens: cart })
+        });
+        if (!res.ok) throw new Error('Erro no servidor');
         localStorage.removeItem(CART_KEY);
-        alert('✅ Pedido realizado com sucesso! (' + sucesso + ' item(ns) enviados)');
+        alert('✅ Pedido realizado com sucesso! (' + cart.length + ' item(ns) no pedido)');
         window.location.href = '/carrinho.html';
-      } else if (sucesso > 0) {
-        alert('⚠️ ' + sucesso + ' enviado(s), ' + falha + ' falhou(ram). Você pode tentar novamente os que ficaram.');
-        window.location.href = '/carrinho.html';
-      } else {
-        alert('❌ Erro ao enviar pedido. Tente novamente.');
-        btn.disabled = false;
-        btn.textContent = '✅ Finalizar Pedido';
+      } catch (err) {
+        // Fallback: se o servidor não aceitar o pacote completo (ex.: limite de tamanho),
+        // envia cada item separadamente para não perder o pedido.
+        let sucesso = 0, falha = 0;
+        for (const pedido of cart) {
+          try {
+            const r = await fetch('/api/pedidos', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(pedido)
+            });
+            if (r.ok) { sucesso++; } else { falha++; }
+          } catch (e) { falha++; }
+        }
+        if (falha === 0) {
+          localStorage.removeItem(CART_KEY);
+          alert('✅ Pedido realizado com sucesso! (' + sucesso + ' item(ns) enviados)');
+          window.location.href = '/carrinho.html';
+        } else if (sucesso > 0) {
+          alert('⚠️ ' + sucesso + ' enviado(s), ' + falha + ' falhou(ram).');
+          window.location.href = '/carrinho.html';
+        } else {
+          alert('❌ Erro ao enviar pedido. Tente novamente.');
+          btn.disabled = false;
+          btn.textContent = '✅ Finalizar Pedido';
+        }
       }
     });
 
