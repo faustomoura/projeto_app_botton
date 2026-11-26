@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
+<head><script src="https://myhub.ia.br/canvas-vendor/tailwind.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel da Barraca - AC Grafic</title>
@@ -23,6 +23,66 @@
     nav a { color: white; margin-left: 20px; text-decoration: none; font-weight: 500; padding: 6px 12px; border-radius: 6px; }
     nav a:hover { background: rgba(255,255,255,0.2); }
     h2 { margin: 30px 0 20px; }
+
+    /* ===== TELA DE LOGIN ===== */
+    #login-area {
+      max-width: 400px;
+      margin: 60px auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 40px 30px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    #login-area h2 { margin-bottom: 10px; }
+    #login-area p { color: #64748b; margin-bottom: 25px; font-size: 14px; }
+    #login-area input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    #login-area button {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    #login-area button:hover { background: var(--primary-dark); }
+    #login-msg { color: var(--danger); font-size: 13px; margin-top: 10px; min-height: 18px; }
+    .login-lock { font-size: 50px; margin-bottom: 15px; }
+
+    /* ===== PAINEL (PROTEGIDO) ===== */
+    #painel-protegido { display: none; }
+
+    .painel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .painel-header h2 { margin: 0; }
+    #btn-sair {
+      background: #64748b;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    #btn-sair:hover { background: #475569; }
 
     .pedido-card {
       background: var(--card);
@@ -130,7 +190,7 @@
 <body>
   <header>
     <div class="container">
-      <h1>🎨 AC Grafic - Painel</h1>
+      <h1>🎨 AC Grafic</h1>
       <nav>
         <a href="/">Início</a>
         <a href="/carrinho.html">Meus Pedidos</a>
@@ -139,14 +199,87 @@
     </div>
   </header>
 
-  <main class="container">
-    <h2>📋 Pedidos Recebidos</h2>
+  <!-- ===== TELA DE LOGIN ===== -->
+  <div class="container">
+    <div id="login-area">
+      <div class="login-lock">🔒</div>
+      <h2>Acesso Restrito</h2>
+      <p>Área exclusiva para o operador da barraca.</p>
+      <input type="password" id="senha-input" placeholder="Digite a senha do operador" onkeydown="if(event.key==='Enter') fazerLogin()">
+      <button onclick="fazerLogin()">Entrar</button>
+      <div id="login-msg"></div>
+    </div>
+  </div>
+
+  <!-- ===== PAINEL PROTEGIDO ===== -->
+  <main class="container" id="painel-protegido">
+    <div class="painel-header">
+      <h2>📋 Pedidos Recebidos</h2>
+      <button id="btn-sair" onclick="sair()">🚪 Sair</button>
+    </div>
     <div id="pedidos-painel">
       <p class="msg-info">Carregando pedidos...</p>
     </div>
   </main>
 
   <script>
+    // =====================================================
+    // 🔐 SENHA DO OPERADOR (Troque aqui quando quiser)
+    // =====================================================
+    const SENHA_OPERADOR = 'AC@2025';
+
+    // =====================================================
+    // 🔐 VERIFICAR SE JÁ ESTÁ LOGADO
+    // =====================================================
+    function verificarLogin() {
+      const logado = sessionStorage.getItem('painel_logado');
+      if (logado === 'true') {
+        mostrarPainel();
+      }
+    }
+
+    // =====================================================
+    // 🔐 LOGIN
+    // =====================================================
+    function fazerLogin() {
+      const senha = document.getElementById('senha-input').value;
+      const msg = document.getElementById('login-msg');
+
+      if (senha === SENHA_OPERADOR) {
+        sessionStorage.setItem('painel_logado', 'true');
+        mostrarPainel();
+      } else {
+        msg.innerHTML = '❌ Senha incorreta! Tente novamente.';
+        document.getElementById('senha-input').value = '';
+        document.getElementById('senha-input').focus();
+      }
+    }
+
+    // =====================================================
+    // 🔐 LOGOUT
+    // =====================================================
+    function sair() {
+      sessionStorage.removeItem('painel_logado');
+      document.getElementById('painel-protegido').style.display = 'none';
+      document.getElementById('login-area').style.display = 'block';
+      document.getElementById('senha-input').value = '';
+      document.getElementById('login-area').
+        querySelector('h2').innerText = 'Acesso Restrito';
+      document.getElementById('login-msg').innerHTML = '';
+    }
+
+    // =====================================================
+    // 🔐 MOSTRAR PAINEL
+    // =====================================================
+    function mostrarPainel() {
+      document.getElementById('login-area').style.display = 'none';
+      document.getElementById('painel-protegido').style.display = 'block';
+      carregarPedidos();
+    }
+
+    // =====================================================
+    // 📋 CARREGAR PEDIDOS
+    // =====================================================
     async function carregarPedidos() {
       const res = await fetch('/api/pedidos');
       const pedidos = await res.json();
@@ -189,6 +322,9 @@
       }).join('');
     }
 
+    // =====================================================
+    // 📋 ATUALIZAR STATUS
+    // =====================================================
     async function atualizarStatus(id, status) {
       await fetch(`/api/pedidos/${id}/status`, {
         method: 'PUT',
@@ -198,14 +334,24 @@
       carregarPedidos();
     }
 
+    // =====================================================
+    // 📋 EXCLUIR PEDIDO
+    // =====================================================
     async function excluirPedido(id) {
       if (!confirm('Tem certeza que deseja excluir este pedido?')) return;
       await fetch(`/api/pedidos/${id}`, { method: 'DELETE' });
       carregarPedidos();
     }
 
-    carregarPedidos();
-    setInterval(carregarPedidos, 10000);
+    // =====================================================
+    // 🚀 INICIALIZAR
+    // =====================================================
+    verificarLogin();
+    setInterval(() => {
+      if (sessionStorage.getItem('painel_logado') === 'true') {
+        carregarPedidos();
+      }
+    }, 10000);
   </script>
 </body>
 </html>
