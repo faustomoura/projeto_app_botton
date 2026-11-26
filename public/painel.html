@@ -513,10 +513,13 @@
         formato = 'quadrado';
       }
 
-      // Canvas com margem
-      const margem = 50;
-      canvas.width = tamanhoBorda + margem * 2;
-      canvas.height = tamanhoBorda + margem * 2;
+      // Canvas no tamanho da folha A5 (148mm x 210mm = 14.8cm x 21cm)
+      // 96 DPI: 14.8cm ≈ 560px, 21cm ≈ 794px
+      canvas.width = 560;  // 14.8cm
+      canvas.height = 794; // 21cm
+
+      // Margem interna de 7mm para não ficar colado na borda do papel
+      const margem = 26.5; // 0.7cm em pixels
 
       // Fundo branco
       ctx.fillStyle = 'white';
