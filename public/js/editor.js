@@ -111,7 +111,7 @@ formato.addEventListener('change', () => {
 });
 
 // =====================================================
-// 🎯 RECORTAR IMAGEM - LÓGICA CORRIGIDA
+// 🎯 RECORTAR IMAGEM - ABORDAGEM DEFINITIVA
 // =====================================================
 function recortarImagem() {
   return new Promise((resolve, reject) => {
@@ -120,7 +120,6 @@ function recortarImagem() {
       return;
     }
 
-    // Tamanhos em pixels a 300 DPI
     const tamanhos = {
       '3x3': 354,
       '3.5x3.5': 413,
@@ -128,75 +127,82 @@ function recortarImagem() {
       '5x5': 591
     };
 
-    const tamanhoSelecionado = document.getElementById('tamanho').value;
-    const tamanhoFinal = tamanhos[tamanhoSelecionado] || 354;
+    const tamanhoFinal = tamanhos[document.getElementById('tamanho').value] || 354;
     const formatoSelecionado = formato.value;
-
-    const MOLDURA_PX = 350; // Tamanho da moldura na tela
+    const MOLDURA = 350;
     const img = imagemOriginal;
 
-    // 1. Calcular como a imagem é exibida na moldura (object-fit: contain)
-    const scaleToFit = Math.min(MOLDURA_PX / img.width, MOLDURA_PX / img.height);
-    const imgDisplayW = img.width * scaleToFit;
-    const imgDisplayH = img.height * scaleToFit;
+    // =====================================================
+    // PASSO 1: Calcular como a imagem aparece na moldura (object-fit: contain)
+    // =====================================================
+    const scaleToFit = Math.min(MOLDURA / img.width, MOLDURA / img.height);
+    const displayW = img.width * scaleToFit;   // largura exibida na moldura
+    const displayH = img.height * scaleToFit;  // altura exibida na moldura
 
-    // 2. Posição inicial (centralizada na moldura)
-    const imgCenterX = MOLDURA_PX / 2;
-    const imgCenterY = MOLDURA_PX / 2;
-
-    // 3. Criar canvas do tamanho final
+    // =====================================================
+    // PASSO 2: Criar canvas do tamanho FINAL do produto
+    // =====================================================
     const canvas = document.createElement('canvas');
     canvas.width = tamanhoFinal;
     canvas.height = tamanhoFinal;
     const ctx = canvas.getContext('2d');
 
-    // 4. Fundo branco
+    // Fundo branco
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, tamanhoFinal, tamanhoFinal);
 
-    // 5. Máscara circular se for redondo
+    // Máscara circular
     if (formatoSelecionado === 'redondo') {
       ctx.save();
       ctx.beginPath();
       ctx.arc(tamanhoFinal / 2, tamanhoFinal / 2, tamanhoFinal / 2, 0, Math.PI * 2);
-      ctx.closePath();
       ctx.clip();
     }
 
-    // 6. Fator de escala: moldura (350px) → canvas final
-    const fator = tamanhoFinal / MOLDURA_PX;
+    // =====================================================
+    // PASSO 3: Calcular proporção entre canvas final e moldura
+    // =====================================================
+    const ratio = tamanhoFinal / MOLDURA;
 
-    // 7. Desenhar imagem no canvas
-    // A imagem na moldura tem tamanho imgDisplayW x imgDisplayH
-    // No canvas final, esse tamanho é multiplicado pelo fator
-    const finalImgW = imgDisplayW * fator;
-    const finalImgH = imgDisplayH * fator;
+    // =====================================================
+    // PASSO 4: Desenhar imagem no canvas
+    // A lógica: replicar EXATAMENTE o que o CSS mostra
+    // =====================================================
 
-    // Centro da imagem no canvas (antes do translate do usuário)
-    const centerX = tamanhoFinal / 2;
-    const centerY = tamanhoFinal / 2;
+    // Tamanho da imagem no canvas final (proporcional à moldura)
+    const finalDisplayW = displayW * ratio;
+    const finalDisplayH = displayH * ratio;
 
-    // Posição da imagem no canvas (centralizada + offset do usuário * fator)
-    const drawX = centerX - finalImgW / 2 + imageState.x * fator;
-    const drawY = centerY - finalImgH / 2 + imageState.y * fator;
+    // Centro do canvas
+    const cx = tamanhoFinal / 2;
+    const cy = tamanhoFinal / 2;
 
-    // Escala final aplicada ao zoom do usuário
-    const finalScale = imageState.scale;
+    // Posição da imagem: centralizada + offset do usuário (escalado) + zoom
+    // O zoom do CSS scale() expande a partir do centro
+    const scaledW = finalDisplayW * imageState.scale;
+    const scaledH = finalDisplayH * imageState.scale;
 
-    // Desenhar a imagem
-    ctx.drawImage(
-      img,
-      drawX,
-      drawY,
-      finalImgW * finalScale,
-      finalImgH * finalScale
-    );
+    // Posição final (centralizada + offset do usuário escalado)
+    const drawX = cx - scaledW / 2 + imageState.x * ratio;
+    const drawY = cy - scaledH / 2 + imageState.y * ratio;
+
+    console.log('DEBUG:', {
+      imgSize: `${img.width}x${img.height}`,
+      displaySize: `${displayW.toFixed(0)}x${displayH.toFixed(0)}`,
+      finalSize: `${finalDisplayW.toFixed(0)}x${finalDisplayH.toFixed(0)}`,
+      scaledSize: `${scaledW.toFixed(0)}x${scaledH.toFixed(0)}`,
+      position: `${drawX.toFixed(0)},${drawY.toFixed(0)}`,
+      userOffset: `${imageState.x},${imageState.y}`,
+      scale: imageState.scale,
+      ratio: ratio.toFixed(3)
+    });
+
+    ctx.drawImage(img, drawX, drawY, scaledW, scaledH);
 
     if (formatoSelecionado === 'redondo') {
       ctx.restore();
     }
 
-    // 8. Converter para File
     canvas.toBlob((blob) => {
       if (blob) {
         resolve(new File([blob], 'boton.png', { type: 'image/png' }));
