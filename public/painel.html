@@ -392,6 +392,13 @@
   <script>
     const SENHA_OPERADOR = 'AC@2025';
 
+    // Exibe a imagem tanto no formato data URL (base64) quanto como arquivo em /uploads
+    function getImgSrc(pedido) {
+      const img = pedido.imagem || '';
+      if (img.startsWith('data:')) return img;
+      return '/uploads/' + img;
+    }
+
     function verificarLogin() {
       const logado = sessionStorage.getItem('painel_logado');
       if (logado === 'true') {
@@ -444,7 +451,7 @@
           <div class="pedido-card">
             <div class="botton-preview">
               <div class="botton-moldura ${classeFormato}">
-                <img src="/uploads/${p.imagem}" alt="${p.produto}">
+                <img src="${getImgSrc(p)}" alt="${p.produto}">
               </div>
             </div>
             <div class="pedido-info">
@@ -504,11 +511,10 @@
       `;
 
       const img = new Image();
-      img.crossOrigin = 'anonymous';
       img.onload = () => {
         gerarCanvas(img, pedidoAtual);
       };
-      img.src = `/uploads/${pedidoAtual.imagem}`;
+      img.src = getImgSrc(pedidoAtual);
     }
 
     function gerarCanvas(img, pedido) {
