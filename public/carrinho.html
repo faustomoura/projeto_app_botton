@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
+<head><script src="https://myhub.ia.br/canvas-vendor/tailwind.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Meus Pedidos - AC Grafic</title>
@@ -141,6 +141,13 @@
   </main>
 
   <script>
+    // Exibe a imagem tanto no formato data URL (base64) quanto como arquivo em /uploads
+    function getImgSrc(pedido) {
+      const img = pedido.imagem || '';
+      if (img.startsWith('data:')) return img;
+      return '/uploads/' + img;
+    }
+
     async function buscarPedidos() {
       const telefone = document.getElementById('tel-busca').value.trim();
       if (!telefone) { alert('Digite seu telefone'); return; }
@@ -162,7 +169,7 @@
           <div class="pedido-card">
             <div class="botton-preview">
               <div class="botton-moldura ${classeFormato}">
-                <img src="/uploads/${p.imagem}" alt="${p.produto}">
+                <img src="${getImgSrc(p)}" alt="${p.produto}">
               </div>
               <div class="botton-info">
                 📐 ${p.tamanho} cm • ${p.formato}
