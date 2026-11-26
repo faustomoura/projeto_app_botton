@@ -202,6 +202,24 @@
       font-size: 18px;
     }
 
+    .tipo-opcao {
+      margin: 12px 0;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      font-size: 14px;
+      color: var(--text-light);
+    }
+    .tipo-opcao label {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .tipo-opcao input[type="radio"] {
+      accent-color: var(--primary);
+    }
+
     .btn-personalizar {
       display: inline-block;
       background: var(--primary);
@@ -277,7 +295,7 @@
 
     <div class="produtos-grid">
       <!-- Botton Redondo -->
-      <div class="produto-card" onclick="selecionarProduto('Botton Redondo')">
+      <div class="produto-card">
         <div class="produto-icon redondo">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="9"/>
@@ -285,12 +303,16 @@
           </svg>
         </div>
         <div class="produto-nome">Botton Redondo</div>
+        <div class="tipo-opcao">
+          <label><input type="radio" name="tipo-redondo" value="Botton Redondo" checked> Botton</label>
+          <label><input type="radio" name="tipo-redondo" value="Imã Redondo"> Imã de Geladeira</label>
+        </div>
         <div class="produto-preco">A partir de <strong>R$ 3,00</strong></div>
-        <button class="btn-personalizar">Personalizar</button>
+        <button class="btn-personalizar" onclick="selecionarFormato('redondo')">Personalizar</button>
       </div>
 
       <!-- Botton Quadrado -->
-      <div class="produto-card" onclick="selecionarProduto('Botton Quadrado')">
+      <div class="produto-card">
         <div class="produto-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="5" y="5" width="14" height="14" rx="2"/>
@@ -298,8 +320,12 @@
           </svg>
         </div>
         <div class="produto-nome">Botton Quadrado</div>
+        <div class="tipo-opcao">
+          <label><input type="radio" name="tipo-quadrado" value="Botton Quadrado" checked> Botton</label>
+          <label><input type="radio" name="tipo-quadrado" value="Imã Quadrado"> Imã de Geladeira</label>
+        </div>
         <div class="produto-preco">A partir de <strong>R$ 3,50</strong></div>
-        <button class="btn-personalizar">Personalizar</button>
+        <button class="btn-personalizar" onclick="selecionarFormato('quadrado')">Personalizar</button>
       </div>
 
       <!-- Chaveiro Redondo -->
@@ -315,18 +341,7 @@
         <button class="btn-personalizar">Personalizar</button>
       </div>
 
-      <!-- Chaveiro Quadrado -->
-      <div class="produto-card" onclick="selecionarProduto('Chaveiro Quadrado')">
-        <div class="produto-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="5" y="5" width="14" height="14" rx="2"/>
-            <circle cx="12" cy="12" r="2"/>
-          </svg>
-        </div>
-        <div class="produto-nome">Chaveiro Quadrado</div>
-        <div class="produto-preco">A partir de <strong>R$ 5,50</strong></div>
-        <button class="btn-personalizar">Personalizar</button>
-      </div>
+
     </div>
   </main>
 
@@ -335,7 +350,13 @@
   </footer>
 
   <script>
-    function selecionarProduto(produto) {
+    function selecionarFormato(formato) {
+      let produto;
+      if (formato === 'redondo') {
+        produto = document.querySelector('input[name="tipo-redondo"]:checked').value;
+      } else if (formato === 'quadrado') {
+        produto = document.querySelector('input[name="tipo-quadrado"]:checked').value;
+      }
       localStorage.setItem('produto_selecionado', produto);
       window.location.href = '/personalizar.html';
     }
