@@ -498,74 +498,101 @@
     function gerarCanvas(img, pedido) {
       const canvas = document.getElementById('canvas-producao');
       const ctx = canvas.getContext('2d');
-      
+
       // Dimensões em pixels (96 DPI: 1cm ≈ 37.8px)
       const DPI = 37.8;
       let tamanhoBotton, tamanhoBorda, formato;
-      
+
       if (pedido.formato === 'redondo') {
         tamanhoBotton = 3.5 * DPI; // 3.5cm
-        tamanhoBorda = 4.7 * DPI;  // 4.7cm
+        tamanhoBorda = 4.7 * DPI;  // 4.7cm (borda)
         formato = 'redondo';
       } else {
         tamanhoBotton = 5 * DPI;   // 5cm
-        tamanhoBorda = 6.5 * DPI;  // 6.5cm
+        tamanhoBorda = 6.5 * DPI;  // 6.5cm (borda)
         formato = 'quadrado';
       }
 
-      // Canvas no tamanho da folha A5 (148mm x 210mm = 14.8cm x 21cm)
-      // 96 DPI: 14.8cm ≈ 560px, 21cm ≈ 794px
-      canvas.width = 560;  // 14.8cm
-      canvas.height = 794; // 21cm
+      // Canvas no tamanho da folha A5 (14.8cm x 21cm) — 96 DPI
+      canvas.width = 560;
+      canvas.height = 794;
 
-      // Margem interna de 7mm para não ficar colado na borda do papel
-      const margem = 26.5; // 0.7cm em pixels
+      // Margem interna de 7mm e espaço de 6mm entre unidades
+      const margem = 26.5;
+      const espaco = 24;
+      const quantidade = Math.max(1, parseInt(pedido.quantidade) || 1);
 
       // Fundo branco
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const centroX = canvas.width / 2;
-      const centroY = canvas.height / 2;
-
-      // Detectar cor de fundo da imagem (amostra das bordas)
+      // Cor da borda detectada do fundo da imagem
       const corFundo = detectarCorFundo(img);
 
-      // Desenhar borda
+      // Calcular quantas colunas cabem na largura da folha
+      const larguraUtil = canvas.width - 2 * margem;
+      const cols = Math.max(1, Math.floor((larguraUtil + espaco) / (tamanhoBorda + espaco)));
+      const totalLargura = cols * tamanhoBorda + (cols - 1) * espaco;
+      const linhas = Math.ceil(quantidade / cols);
+      const totalAltura = linhas * tamanhoBorda + (linhas - 1) * espaco;
+
+      // Quantas unidades cabem por folha A5 e quantas folhas serão necessárias
+      const capacidadeLinhas = Math.max(1, Math.floor((canvas.height - 2 * margem + espaco) / (tamanhoBorda + espaco)));
+      const capacidade = cols * capacidadeLinhas;
+      const paginas = Math.ceil(quantidade / capacidade);
+
+      // Atualizar info com o total de folhas
+      const info = document.getElementById('producao-info');
+      info.innerHTML += `<br><strong>Folha A5:</strong> cabem ${capacidade} por folha | <strong>Total:</strong> ${paginas} folha(s)`;
+
+      // Centralizar a grade na folha
+      const inicioX = (canvas.width - totalLargura) / 2 + tamanhoBorda / 2;
+      const inicioY = (canvas.height - totalAltura) / 2 + tamanhoBorda / 2;
+
+      for (let i = 0; i < quantidade; i++) {
+        const col = i % cols;
+        const lin = Math.floor(i / cols);
+        const cx = inicioX + col * (tamanhoBorda + espaco);
+        const cy = inicioY + lin * (tamanhoBorda + espaco);
+        desenharBotton(ctx, img, cx, cy, tamanhoBotton, tamanhoBorda, formato, corFundo);
+      }
+    }
+
+    // Desenha um único botton/imã centralizado em (cx, cy)
+    function desenharBotton(ctx, img, cx, cy, tamanhoBotton, tamanhoBorda, formato, corFundo) {
+      // ===== BORDA (cor do fundo da imagem) =====
       ctx.fillStyle = corFundo;
       if (formato === 'redondo') {
         ctx.beginPath();
-        ctx.arc(centroX, centroY, tamanhoBorda / 2, 0, Math.PI * 2);
+        ctx.arc(cx, cy, tamanhoBorda / 2, 0, Math.PI * 2);
         ctx.fill();
       } else {
-        // Quadrado com cantos arredondados (raio 10% do tamanho)
         const raio = tamanhoBorda * 0.1;
         ctx.beginPath();
-        ctx.moveTo(centroX - tamanhoBorda/2 + raio, centroY - tamanhoBorda/2);
-        ctx.lineTo(centroX + tamanhoBorda/2 - raio, centroY - tamanhoBorda/2);
-        ctx.arcTo(centroX + tamanhoBorda/2, centroY - tamanhoBorda/2, centroX + tamanhoBorda/2, centroY - tamanhoBorda/2 + raio, raio);
-        ctx.lineTo(centroX + tamanhoBorda/2, centroY + tamanhoBorda/2 - raio);
-        ctx.arcTo(centroX + tamanhoBorda/2, centroY + tamanhoBorda/2, centroX + tamanhoBorda/2 - raio, centroY + tamanhoBorda/2, raio);
-        ctx.lineTo(centroX - tamanhoBorda/2 + raio, centroY + tamanhoBorda/2);
-        ctx.arcTo(centroX - tamanhoBorda/2, centroY + tamanhoBorda/2, centroX - tamanhoBorda/2, centroY + tamanhoBorda/2 - raio, raio);
-        ctx.lineTo(centroX - tamanhoBorda/2, centroY - tamanhoBorda/2 + raio);
-        ctx.arcTo(centroX - tamanhoBorda/2, centroY - tamanhoBorda/2, centroX - tamanhoBorda/2 + raio, centroY - tamanhoBorda/2, raio);
+        ctx.moveTo(cx - tamanhoBorda/2 + raio, cy - tamanhoBorda/2);
+        ctx.lineTo(cx + tamanhoBorda/2 - raio, cy - tamanhoBorda/2);
+        ctx.arcTo(cx + tamanhoBorda/2, cy - tamanhoBorda/2, cx + tamanhoBorda/2, cy - tamanhoBorda/2 + raio, raio);
+        ctx.lineTo(cx + tamanhoBorda/2, cy + tamanhoBorda/2 - raio);
+        ctx.arcTo(cx + tamanhoBorda/2, cy + tamanhoBorda/2, cx + tamanhoBorda/2 - raio, cy + tamanhoBorda/2, raio);
+        ctx.lineTo(cx - tamanhoBorda/2 + raio, cy + tamanhoBorda/2);
+        ctx.arcTo(cx - tamanhoBorda/2, cy + tamanhoBorda/2, cx - tamanhoBorda/2, cy + tamanhoBorda/2 - raio, raio);
+        ctx.lineTo(cx - tamanhoBorda/2, cy - tamanhoBorda/2 + raio);
+        ctx.arcTo(cx - tamanhoBorda/2, cy - tamanhoBorda/2, cx - tamanhoBorda/2 + raio, cy - tamanhoBorda/2, raio);
         ctx.closePath();
         ctx.fill();
       }
 
-      // Desenhar imagem no centro
+      // ===== IMAGEM (cortada no formato) =====
       const escala = Math.min(tamanhoBotton / img.width, tamanhoBotton / img.height);
       const imgLargura = img.width * escala;
       const imgAltura = img.height * escala;
-      const imgX = centroX - imgLargura / 2;
-      const imgY = centroY - imgAltura / 2;
+      const imgX = cx - imgLargura / 2;
+      const imgY = cy - imgAltura / 2;
 
-      // Clip para formato
       ctx.save();
       if (formato === 'redondo') {
         ctx.beginPath();
-        ctx.arc(centroX, centroY, tamanhoBotton / 2, 0, Math.PI * 2);
+        ctx.arc(cx, cy, tamanhoBotton / 2, 0, Math.PI * 2);
         ctx.clip();
       } else {
         const raioInterno = tamanhoBotton * 0.1;
@@ -586,28 +613,28 @@
       ctx.drawImage(img, imgX, imgY, imgLargura, imgAltura);
       ctx.restore();
 
-      // Borda preta fina para visualização
+      // ===== FIOS DE CORTE (traço preto) =====
       ctx.strokeStyle = '#000';
       ctx.lineWidth = 1;
       if (formato === 'redondo') {
         ctx.beginPath();
-        ctx.arc(centroX, centroY, tamanhoBorda / 2, 0, Math.PI * 2);
+        ctx.arc(cx, cy, tamanhoBorda / 2, 0, Math.PI * 2);
         ctx.stroke();
         ctx.beginPath();
-        ctx.arc(centroX, centroY, tamanhoBotton / 2, 0, Math.PI * 2);
+        ctx.arc(cx, cy, tamanhoBotton / 2, 0, Math.PI * 2);
         ctx.stroke();
       } else {
         const raio = tamanhoBorda * 0.1;
         ctx.beginPath();
-        ctx.moveTo(centroX - tamanhoBorda/2 + raio, centroY - tamanhoBorda/2);
-        ctx.lineTo(centroX + tamanhoBorda/2 - raio, centroY - tamanhoBorda/2);
-        ctx.arcTo(centroX + tamanhoBorda/2, centroY - tamanhoBorda/2, centroX + tamanhoBorda/2, centroY - tamanhoBorda/2 + raio, raio);
-        ctx.lineTo(centroX + tamanhoBorda/2, centroY + tamanhoBorda/2 - raio);
-        ctx.arcTo(centroX + tamanhoBorda/2, centroY + tamanhoBorda/2, centroX + tamanhoBorda/2 - raio, centroY + tamanhoBorda/2, raio);
-        ctx.lineTo(centroX - tamanhoBorda/2 + raio, centroY + tamanhoBorda/2);
-        ctx.arcTo(centroX - tamanhoBorda/2, centroY + tamanhoBorda/2, centroX - tamanhoBorda/2, centroY + tamanhoBorda/2 - raio, raio);
-        ctx.lineTo(centroX - tamanhoBorda/2, centroY - tamanhoBorda/2 + raio);
-        ctx.arcTo(centroX - tamanhoBorda/2, centroY - tamanhoBorda/2, centroX - tamanhoBorda/2 + raio, centroY - tamanhoBorda/2, raio);
+        ctx.moveTo(cx - tamanhoBorda/2 + raio, cy - tamanhoBorda/2);
+        ctx.lineTo(cx + tamanhoBorda/2 - raio, cy - tamanhoBorda/2);
+        ctx.arcTo(cx + tamanhoBorda/2, cy - tamanhoBorda/2, cx + tamanhoBorda/2, cy - tamanhoBorda/2 + raio, raio);
+        ctx.lineTo(cx + tamanhoBorda/2, cy + tamanhoBorda/2 - raio);
+        ctx.arcTo(cx + tamanhoBorda/2, cy + tamanhoBorda/2, cx + tamanhoBorda/2 - raio, cy + tamanhoBorda/2, raio);
+        ctx.lineTo(cx - tamanhoBorda/2 + raio, cy + tamanhoBorda/2);
+        ctx.arcTo(cx - tamanhoBorda/2, cy + tamanhoBorda/2, cx - tamanhoBorda/2, cy + tamanhoBorda/2 - raio, raio);
+        ctx.lineTo(cx - tamanhoBorda/2, cy - tamanhoBorda/2 + raio);
+        ctx.arcTo(cx - tamanhoBorda/2, cy - tamanhoBorda/2, cx - tamanhoBorda/2 + raio, cy - tamanhoBorda/2, raio);
         ctx.closePath();
         ctx.stroke();
 
