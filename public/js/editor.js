@@ -20,7 +20,7 @@ if (produto.toLowerCase().includes('quadrado')) {
 }
 
 let imageState = { x: 0, y: 0, scale: 1, isDragging: false, startX: 0, startY: 0 };
-let imagemOriginal = null; // Guarda a imagem carregada em memória
+let imagemOriginal = null;
 
 upload.addEventListener('change', (e) => {
   const file = e.target.files[0];
@@ -111,7 +111,7 @@ formato.addEventListener('change', () => {
 });
 
 // =====================================================
-// 🎯 FUNÇÃO MÁGICA: Recorta a imagem no formato/tamanho real
+// 🎯 RECORTAR IMAGEM - LÓGICA CORRIGIDA
 // =====================================================
 function recortarImagem() {
   return new Promise((resolve, reject) => {
@@ -120,62 +120,83 @@ function recortarImagem() {
       return;
     }
 
-    // Tamanhos em pixels a 300 DPI (qualidade de impressão)
+    // Tamanhos em pixels a 300 DPI
     const tamanhos = {
-      '3x3': 354,     // 3,0 cm
-      '3.5x3.5': 413, // 3,5 cm
-      '4x4': 472,     // 4,0 cm
-      '5x5': 591      // 5,0 cm
+      '3x3': 354,
+      '3.5x3.5': 413,
+      '4x4': 472,
+      '5x5': 591
     };
 
     const tamanhoSelecionado = document.getElementById('tamanho').value;
-    const tamanhoPx = tamanhos[tamanhoSelecionado] || 354;
+    const tamanhoFinal = tamanhos[tamanhoSelecionado] || 354;
     const formatoSelecionado = formato.value;
 
-    // Criar canvas do tamanho real do produto
+    const MOLDURA_PX = 350; // Tamanho da moldura na tela
+    const img = imagemOriginal;
+
+    // 1. Calcular como a imagem é exibida na moldura (object-fit: contain)
+    const scaleToFit = Math.min(MOLDURA_PX / img.width, MOLDURA_PX / img.height);
+    const imgDisplayW = img.width * scaleToFit;
+    const imgDisplayH = img.height * scaleToFit;
+
+    // 2. Posição inicial (centralizada na moldura)
+    const imgCenterX = MOLDURA_PX / 2;
+    const imgCenterY = MOLDURA_PX / 2;
+
+    // 3. Criar canvas do tamanho final
     const canvas = document.createElement('canvas');
-    canvas.width = tamanhoPx;
-    canvas.height = tamanhoPx;
+    canvas.width = tamanhoFinal;
+    canvas.height = tamanhoFinal;
     const ctx = canvas.getContext('2d');
 
-    // Fundo branco
+    // 4. Fundo branco
     ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, tamanhoPx, tamanhoPx);
+    ctx.fillRect(0, 0, tamanhoFinal, tamanhoFinal);
 
-    // Se for redondo, criar máscara circular
+    // 5. Máscara circular se for redondo
     if (formatoSelecionado === 'redondo') {
+      ctx.save();
       ctx.beginPath();
-      ctx.arc(tamanhoPx / 2, tamanhoPx / 2, tamanhoPx / 2, 0, Math.PI * 2);
+      ctx.arc(tamanhoFinal / 2, tamanhoFinal / 2, tamanhoFinal / 2, 0, Math.PI * 2);
       ctx.closePath();
       ctx.clip();
     }
 
-    // Calcular como a imagem aparece na moldura (350x350px na tela)
-    const molduraSize = 350;
-    const img = imagemOriginal;
+    // 6. Fator de escala: moldura (350px) → canvas final
+    const fator = tamanhoFinal / MOLDURA_PX;
 
-    // Escala da imagem para caber na moldura (contain)
-    const scaleToFit = Math.min(molduraSize / img.width, molduraSize / img.height);
-    const imgDisplayWidth = img.width * scaleToFit;
-    const imgDisplayHeight = img.height * scaleToFit;
+    // 7. Desenhar imagem no canvas
+    // A imagem na moldura tem tamanho imgDisplayW x imgDisplayH
+    // No canvas final, esse tamanho é multiplicado pelo fator
+    const finalImgW = imgDisplayW * fator;
+    const finalImgH = imgDisplayH * fator;
 
-    // Posição da imagem na moldura (centralizada + offset do usuário)
-    const imgX = (molduraSize - imgDisplayWidth) / 2 + imageState.x;
-    const imgY = (molduraSize - imgDisplayHeight) / 2 + imageState.y;
+    // Centro da imagem no canvas (antes do translate do usuário)
+    const centerX = tamanhoFinal / 2;
+    const centerY = tamanhoFinal / 2;
 
-    // Fator de escala entre a moldura (350px) e o canvas real
-    const factor = tamanhoPx / molduraSize;
-    const finalScale = scaleToFit * imageState.scale * factor;
+    // Posição da imagem no canvas (centralizada + offset do usuário * fator)
+    const drawX = centerX - finalImgW / 2 + imageState.x * fator;
+    const drawY = centerY - finalImgH / 2 + imageState.y * fator;
 
-    // Desenhar imagem no canvas com as transformações aplicadas
-    const drawWidth = img.width * finalScale;
-    const drawHeight = img.height * finalScale;
-    const drawX = (tamanhoPx - drawWidth) / 2 + imageState.x * factor;
-    const drawY = (tamanhoPx - drawHeight) / 2 + imageState.y * factor;
+    // Escala final aplicada ao zoom do usuário
+    const finalScale = imageState.scale;
 
-    ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+    // Desenhar a imagem
+    ctx.drawImage(
+      img,
+      drawX,
+      drawY,
+      finalImgW * finalScale,
+      finalImgH * finalScale
+    );
 
-    // Converter para Blob e resolver
+    if (formatoSelecionado === 'redondo') {
+      ctx.restore();
+    }
+
+    // 8. Converter para File
     canvas.toBlob((blob) => {
       if (blob) {
         resolve(new File([blob], 'boton.png', { type: 'image/png' }));
@@ -186,7 +207,7 @@ function recortarImagem() {
   });
 }
 
-// FINALIZAR PEDIDO - agora envia a imagem recortada
+// FINALIZAR PEDIDO
 btnFinalizar.addEventListener('click', async () => {
   const file = upload.files[0];
   if (!file) { alert('Envie uma imagem primeiro.'); return; }
@@ -198,11 +219,10 @@ btnFinalizar.addEventListener('click', async () => {
   btnFinalizar.innerText = '⏳ Processando...';
 
   try {
-    // Recortar a imagem no formato/tamanho real
     const imagemRecortada = await recortarImagem();
 
     const formData = new FormData();
-    formData.append('imagem', imagemRecortada); // Envia a imagem JÁ RECORTADA
+    formData.append('imagem', imagemRecortada);
     formData.append('cliente_nome', clienteNome);
     formData.append('cliente_telefone', clienteTel);
     formData.append('barraca', document.getElementById('barraca').value);
