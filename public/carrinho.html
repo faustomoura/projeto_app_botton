@@ -20,33 +20,25 @@
 
   <main class="container">
     <h2>Meus Pedidos</h2>
-    
     <div id="busca-area">
-      <input type="text" id="tel-busca" placeholder="Digite seu telefone para buscar pedidos">
+      <input type="text" id="tel-busca" placeholder="Digite seu telefone">
       <button onclick="buscarPedidos()">Buscar</button>
     </div>
-
     <div id="lista-pedidos-cliente"></div>
   </main>
 
   <script>
     async function buscarPedidos() {
       const telefone = document.getElementById('tel-busca').value.trim();
-      if (!telefone) {
-        alert('Digite seu telefone');
-        return;
-      }
-
+      if (!telefone) { alert('Digite seu telefone'); return; }
       const res = await fetch('/api/pedidos');
       const pedidos = await res.json();
       const meus = pedidos.filter(p => p.cliente_telefone === telefone);
-
       const div = document.getElementById('lista-pedidos-cliente');
       if (meus.length === 0) {
-        div.innerHTML = '<p class="msg-info">Nenhum pedido encontrado para este telefone.</p>';
+        div.innerHTML = '<p>Nenhum pedido encontrado.</p>';
         return;
       }
-
       div.innerHTML = meus.map(p => `
         <div class="pedido-card">
           <img src="/uploads/${p.imagem}" alt="Pedido">
