@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AC Grafic - Botons e Chaveiros Personalizados</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>🎨 AC Grafic</h1>
+      <nav>
+        <a href="/">Início</a>
+        <a href="/carrinho.html">Meus Pedidos</a>
+        <a href="/painel.html">Painel da Barraca</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2>Escolha seu produto</h2>
+    
+    <div class="produtos">
+      <div class="produto-card" onclick="escolherProduto('Botton Redondo')">
+        <div class="preview redondo"></div>
+        <h3>Botton Redondo</h3>
+        <p>A partir de R$ 3,00</p>
+        <button>Personalizar</button>
+      </div>
+
+      <div class="produto-card" onclick="escolherProduto('Botton Quadrado')">
+        <div class="preview quadrado"></div>
+        <h3>Botton Quadrado</h3>
+        <p>A partir de R$ 3,50</p>
+        <button>Personalizar</button>
+      </div>
+
+      <div class="produto-card" onclick="escolherProduto('Chaveiro Redondo')">
+        <div class="preview redondo chaveiro"></div>
+        <h3>Chaveiro Redondo</h3>
+        <p>A partir de R$ 5,00</p>
+        <button>Personalizar</button>
+      </div>
+
+      <div class="produto-card" onclick="escolherProduto('Chaveiro Quadrado')">
+        <div class="preview quadrado chaveiro"></div>
+        <h3>Chaveiro Quadrado</h3>
+        <p>A partir de R$ 5,50</p>
+        <button>Personalizar</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
