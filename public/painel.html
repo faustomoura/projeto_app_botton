@@ -48,6 +48,8 @@
     .modal h3 { margin-bottom: 16px; color: var(--primary); }
     #canvas-producao { max-width: 100%; border: 1px solid var(--border); border-radius: 8px; }
     .modal-fechar { background: #64748b; color: white; border: none; padding: 8px 16px; border-radius: 6px; margin-top: 16px; cursor: pointer; }
+    .btn-download { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; margin: 4px 6px 0 0; cursor: pointer; font-weight: 600; }
+    .btn-download:hover { background: var(--primary-dark); }
 
     @media (max-width: 768px) {
       header .container { flex-direction: column; gap: 10px; }
@@ -83,6 +85,8 @@
       <p id="producao-info" style="margin-bottom: 16px;"></p>
       <canvas id="canvas-producao"></canvas>
       <br>
+      <button class="modal-fechar" onclick="downloadProducao()">⬇️ Baixar PNG</button>
+      <button class="modal-fechar" onclick="imprimirProducao()">🖨️ Imprimir</button>
       <button class="modal-fechar" onclick="fecharModal()">❌ Fechar</button>
     </div>
   </div>
@@ -160,42 +164,179 @@
     function desenharLayout(img, pedido) {
       const canvas = document.getElementById('canvas-producao');
       const ctx = canvas.getContext('2d');
-      const tamanho = 600;
-      canvas.width = tamanho;
-      canvas.height = tamanho;
 
-      // Fundo
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, tamanho, tamanho);
+      const DPI = 37.8;
+      let tamanhoBotton, tamanhoBorda, formato;
 
-      // Máscara circular se redondo
       if (pedido.formato === 'redondo') {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(tamanho / 2, tamanho / 2, tamanho / 2, 0, Math.PI * 2);
-        ctx.clip();
-      }
-
-      // Desenha a imagem cobrindo o canvas
-      const scale = Math.max(tamanho / img.width, tamanho / img.height);
-      const w = img.width * scale;
-      const h = img.height * scale;
-      ctx.drawImage(img, (tamanho - w) / 2, (tamanho - h) / 2, w, h);
-
-      if (pedido.formato === 'redondo') ctx.restore();
-
-      // Linha de corte
-      ctx.strokeStyle = '#ef4444';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([10, 5]);
-      if (pedido.formato === 'redondo') {
-        ctx.beginPath();
-        ctx.arc(tamanho / 2, tamanho / 2, tamanho / 2 - 3, 0, Math.PI * 2);
-        ctx.stroke();
+        tamanhoBotton = 3.5 * DPI;   // botton redondo 3,5 cm
+        tamanhoBorda = 4.7 * DPI;    // anel de acabamento
+        formato = 'redondo';
       } else {
-        ctx.strokeRect(3, 3, tamanho - 6, tamanho - 6);
+        tamanhoBotton = 5 * DPI;     // botton quadrado 5 cm
+        tamanhoBorda = 6.5 * DPI;    // moldura de acabamento
+        formato = 'quadrado';
       }
-      ctx.setLineDash([]);
+
+      // Folha A5 paisagem (210 x 148 mm)
+      canvas.width = 794;
+      canvas.height = 560;
+
+      const margem = 26.5;
+      const colunas = Math.floor((canvas.width - margem * 2) / tamanhoBorda);
+      const linhas = Math.floor((canvas.height - margem * 2) / tamanhoBorda);
+      const porFolha = colunas * linhas;
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const corFundo = detectarCorFundo(img);
+      let unidade = 0;
+
+      for (let linha = 0; linha < linhas && unidade < pedido.quantidade; linha++) {
+        for (let coluna = 0; coluna < colunas && unidade < pedido.quantidade; coluna++) {
+          const cx = margem + coluna * tamanhoBorda + tamanhoBorda / 2;
+          const cy = margem + linha * tamanhoBorda + tamanhoBorda / 2;
+
+          // ---- BORDA DE ACABAMENTO (fundo na cor da imagem) ----
+          ctx.fillStyle = corFundo;
+          if (formato === 'redondo') {
+            ctx.beginPath();
+            ctx.arc(cx, cy, tamanhoBorda / 2, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            const r = tamanhoBorda * 0.1;
+            ctx.beginPath();
+            ctx.moveTo(cx - tamanhoBorda/2 + r, cy - tamanhoBorda/2);
+            ctx.lineTo(cx + tamanhoBorda/2 - r, cy - tamanhoBorda/2);
+            ctx.arcTo(cx + tamanhoBorda/2, cy - tamanhoBorda/2, cx + tamanhoBorda/2, cy - tamanhoBorda/2 + r, r);
+            ctx.lineTo(cx + tamanhoBorda/2, cy + tamanhoBorda/2 - r);
+            ctx.arcTo(cx + tamanhoBorda/2, cy + tamanhoBorda/2, cx + tamanhoBorda/2 - r, cy + tamanhoBorda/2, r);
+            ctx.lineTo(cx - tamanhoBorda/2 + r, cy + tamanhoBorda/2);
+            ctx.arcTo(cx - tamanhoBorda/2, cy + tamanhoBorda/2, cx - tamanhoBorda/2, cy + tamanhoBorda/2 - r, r);
+            ctx.lineTo(cx - tamanhoBorda/2, cy - tamanhoBorda/2 + r);
+            ctx.arcTo(cx - tamanhoBorda/2, cy - tamanhoBorda/2, cx - tamanhoBorda/2 + r, cy - tamanhoBorda/2, r);
+            ctx.closePath();
+            ctx.fill();
+          }
+
+          // ---- BOTTON (imagem recortada) ----
+          const escala = Math.min(tamanhoBotton / img.width, tamanhoBotton / img.height);
+          const w = img.width * escala;
+          const h = img.height * escala;
+          const ix = cx - w / 2;
+          const iy = cy - h / 2;
+
+          ctx.save();
+          if (formato === 'redondo') {
+            ctx.beginPath();
+            ctx.arc(cx, cy, tamanhoBotton / 2, 0, Math.PI * 2);
+            ctx.clip();
+          } else {
+            const ri = tamanhoBotton * 0.1;
+            ctx.beginPath();
+            ctx.moveTo(ix + ri, iy);
+            ctx.lineTo(ix + w - ri, iy);
+            ctx.arcTo(ix + w, iy, ix + w, iy + ri, ri);
+            ctx.lineTo(ix + w, iy + h - ri);
+            ctx.arcTo(ix + w, iy + h, ix + w - ri, iy + h, ri);
+            ctx.lineTo(ix + ri, iy + h);
+            ctx.arcTo(ix, iy + h, ix, iy + h - ri, ri);
+            ctx.lineTo(ix, iy + ri);
+            ctx.arcTo(ix, iy, ix + ri, iy, ri);
+            ctx.closePath();
+            ctx.clip();
+          }
+          ctx.drawImage(img, ix, iy, w, h);
+          ctx.restore();
+
+          // ---- LINHAS DE CORTE ----
+          ctx.strokeStyle = '#000000';
+          ctx.lineWidth = 1;
+          if (formato === 'redondo') {
+            ctx.beginPath();
+            ctx.arc(cx, cy, tamanhoBorda / 2, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(cx, cy, tamanhoBotton / 2, 0, Math.PI * 2);
+            ctx.stroke();
+          } else {
+            const ri = tamanhoBotton * 0.1;
+            ctx.beginPath();
+            ctx.moveTo(ix + ri, iy);
+            ctx.lineTo(ix + w - ri, iy);
+            ctx.arcTo(ix + w, iy, ix + w, iy + ri, ri);
+            ctx.lineTo(ix + w, iy + h - ri);
+            ctx.arcTo(ix + w, iy + h, ix + w - ri, iy + h, ri);
+            ctx.lineTo(ix + ri, iy + h);
+            ctx.arcTo(ix, iy + h, ix, iy + h - ri, ri);
+            ctx.lineTo(ix, iy + ri);
+            ctx.arcTo(ix, iy, ix + ri, iy, ri);
+            ctx.closePath();
+            ctx.stroke();
+          }
+
+          unidade++;
+        }
+      }
+    }
+
+    function detectarCorFundo(img) {
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+
+        const amostras = [];
+        const n = 10;
+        for (let y = 0; y < n; y++) {
+          for (let x = 0; x < n; x++) {
+            const px = ctx.getImageData(x, y, 1, 1).data;
+            amostras.push([px[0], px[1], px[2]]);
+          }
+        }
+        for (let y = 0; y < n; y++) {
+          for (let x = img.width - n; x < img.width; x++) {
+            const px = ctx.getImageData(x, y, 1, 1).data;
+            amostras.push([px[0], px[1], px[2]]);
+          }
+        }
+        let r = 0, g = 0, b = 0;
+        amostras.forEach(([pr, pg, pb]) => { r += pr; g += pg; b += pb; });
+        r = Math.round(r / amostras.length);
+        g = Math.round(g / amostras.length);
+        b = Math.round(b / amostras.length);
+        return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+      } catch (e) {
+        return '#ffffff';
+      }
+    }
+
+    function downloadProducao() {
+      const canvas = document.getElementById('canvas-producao');
+      const link = document.createElement('a');
+      link.download = 'botton-' + pedidoAtual.id + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    function imprimirProducao() {
+      const canvas = document.getElementById('canvas-producao');
+      const dataUrl = canvas.toDataURL('image/png');
+      const janela = window.open('', '_blank', 'width=900,height=700');
+      if (!janela) {
+        alert('Permita pop-ups do navegador para poder imprimir.');
+        return;
+      }
+      janela.document.write(
+        '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Imprimir - Pedido #' + pedidoAtual.id + '</title>' +
+        '<style>@page { size: A5 landscape; margin: 0; } html, body { margin: 0; padding: 0; width: 210mm; height: 148mm; overflow: hidden; } body { display: flex; align-items: center; justify-content: center; background: #fff; } img { width: 210mm; height: 148mm; object-fit: contain; display: block; }</style>' +
+        '</head><body><img src="' + dataUrl + '" onload="setTimeout(function(){ window.focus(); window.print(); }, 300);"></body></html>'
+      );
+      janela.document.close();
+      janela.focus();
     }
 
     function fecharModal() {
