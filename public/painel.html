@@ -6,13 +6,8 @@
   <title>Painel da Barraca - AC Grafic</title>
   <style>
     :root {
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --text: #1e293b;
-      --border: #cbd5e1;
-      --danger: #dc2626;
+      --primary: #2563eb; --primary-dark: #1d4ed8;
+      --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --border: #cbd5e1;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { background: var(--bg); color: var(--text); min-height: 100vh; }
@@ -24,318 +19,41 @@
     nav a:hover { background: rgba(255,255,255,0.2); }
     h2 { margin: 30px 0 20px; }
 
-    #login-area {
-      max-width: 400px;
-      margin: 60px auto;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 40px 30px;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-    #login-area h2 { margin-bottom: 10px; }
-    #login-area p { color: #64748b; margin-bottom: 25px; font-size: 14px; }
-    #login-area input {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 16px;
-      margin-bottom: 15px;
-      text-align: center;
-    }
-    #login-area button {
-      width: 100%;
-      padding: 12px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 500;
-      cursor: pointer;
-    }
-    #login-area button:hover { background: var(--primary-dark); }
-    #login-msg { color: var(--danger); font-size: 13px; margin-top: 10px; min-height: 18px; }
-    .login-lock { font-size: 50px; margin-bottom: 15px; }
+    .pedido-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .pedido-imagem { flex-shrink: 0; }
+    .pedido-imagem img { width: 150px; height: 150px; object-fit: cover; border-radius: 8px; border: 2px solid var(--border); }
+    .pedido-detalhes { flex: 1; min-width: 250px; }
+    .pedido-detalhes h3 { color: var(--primary); margin-bottom: 10px; }
+    .pedido-detalhes p { margin: 6px 0; font-size: 14px; }
+    .pedido-acoes { display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
+    .pedido-acoes button { padding: 8px 12px; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; }
+    .btn-layout { background: var(--primary); color: white; }
+    .btn-layout:hover { background: var(--primary-dark); }
+    .btn-status { background: #f59e0b; color: white; }
+    .btn-excluir { background: #ef4444; color: white; }
+    .btn-excluir:hover { background: #dc2626; }
 
-    #painel-protegido { display: none; }
-
-    .painel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .painel-header h2 { margin: 0; }
-    #btn-sair {
-      background: #64748b;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    #btn-sair:hover { background: #475569; }
-
-    .pedido-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      flex-wrap: wrap;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-
-    .botton-preview {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .botton-moldura {
-      background: #e2e8f0;
-      padding: 15px;
-      border-radius: 8px;
-    }
-
-    .botton-moldura.redondo img {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #2563eb;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    .botton-moldura.quadrado img {
-      width: 120px;
-      height: 120px;
-      border-radius: 12px;
-      object-fit: cover;
-      border: 3px solid #2563eb;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-
-    .pedido-info { flex: 1; min-width: 250px; }
-    .pedido-info h3 { color: var(--primary); margin-bottom: 8px; }
-    .pedido-info p { margin: 4px 0; font-size: 14px; }
-
-    .pedido-acoes {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-width: 180px;
-    }
-
-    .pedido-acoes select {
-      padding: 8px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 14px;
-    }
-
-    .btn-danger {
-      background: var(--danger);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .btn-danger:hover { background: #b91c1c; }
-
-    .btn-producao {
-      background: #10b981;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .btn-producao:hover { background: #059669; }
-
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.7);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    .modal-content {
-      background: white;
-      border-radius: 12px;
-      padding: 30px;
-      max-width: 900px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      position: relative;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .modal-header h3 {
-      color: var(--primary);
-      font-size: 22px;
-    }
-
-    .btn-fechar {
-      background: #64748b;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .btn-fechar:hover { background: #475569; }
-
-    .producao-info {
-      background: #f1f5f9;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      font-size: 14px;
-    }
-
-    .producao-info strong {
-      color: var(--primary);
-    }
-
-    .canvas-producao {
-      background: white;
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      padding: 20px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .canvas-producao canvas {
-      max-width: 100%;
-      height: auto;
-    }
-
-    .btn-download {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 500;
-      margin-right: 10px;
-    }
-
-    .btn-download:hover { background: var(--primary-dark); }
-
-    .status {
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 12px;
-      text-transform: uppercase;
-      font-weight: bold;
-      display: inline-block;
-    }
+    .status { padding: 4px 12px; border-radius: 12px; font-size: 12px; text-transform: uppercase; font-weight: bold; display: inline-block; }
     .status.recebido { background: #fef3c7; color: #92400e; }
     .status.em_producao { background: #dbeafe; color: #1e40af; }
     .status.pronto { background: #d1fae5; color: #065f46; }
     .status.entregue { background: #e2e8f0; color: #475569; }
 
-    .msg-info {
-      padding: 30px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      text-align: center;
-      color: #64748b;
-    }
+    .msg-info { padding: 30px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; text-align: center; color: #64748b; }
 
-    @media print {
-      @page {
-        size: A5 landscape;
-        margin: 0;
-      }
-      
-      body * {
-        visibility: hidden !important;
-      }
-      
-      .modal-overlay.active,
-      .modal-overlay.active * {
-        visibility: visible !important;
-      }
-      
-      .modal-overlay {
-        position: absolute !important;
-        top: 0 !important;
-        left: 0 !important;
-        background: white !important;
-        padding: 0 !important;
-      }
-      
-      .modal-content {
-        padding: 0 !important;
-        max-width: none !important;
-        box-shadow: none !important;
-      }
-      
-      .modal-header,
-      .producao-info,
-      .btn-download,
-      .btn-fechar {
-        display: none !important;
-      }
-      
-      .canvas-producao {
-        border: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-      }
-      
-      .canvas-producao canvas {
-        width: 210mm !important;
-        height: 148mm !important;
-      }
-    }
+    /* Modal de layout/produção */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
+    .modal-overlay.active { display: flex; }
+    .modal { background: white; border-radius: 12px; padding: 24px; max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; }
+    .modal h3 { margin-bottom: 16px; color: var(--primary); }
+    #canvas-producao { max-width: 100%; border: 1px solid var(--border); border-radius: 8px; }
+    .modal-fechar { background: #64748b; color: white; border: none; padding: 8px 16px; border-radius: 6px; margin-top: 16px; cursor: pointer; }
 
     @media (max-width: 768px) {
       header .container { flex-direction: column; gap: 10px; }
       nav a { margin: 0 5px; }
       .pedido-card { flex-direction: column; align-items: flex-start; }
+      .pedido-acoes { flex-direction: row; flex-wrap: wrap; }
     }
   </style>
 </head>
@@ -351,392 +69,162 @@
     </div>
   </header>
 
-  <div class="container">
-    <div id="login-area">
-      <div class="login-lock">🔒</div>
-      <h2>Acesso Restrito</h2>
-      <p>Área exclusiva para o operador da barraca.</p>
-      <input type="password" id="senha-input" placeholder="Digite a senha do operador" onkeydown="if(event.key==='Enter') fazerLogin()">
-      <button onclick="fazerLogin()">Entrar</button>
-      <div id="login-msg"></div>
-    </div>
-  </div>
-
-  <main class="container" id="painel-protegido">
-    <div class="painel-header">
-      <h2>📋 Pedidos Recebidos</h2>
-      <button id="btn-sair" onclick="sair()">🚪 Sair</button>
-    </div>
-    <div id="pedidos-painel">
+  <main class="container">
+    <h2>📋 Pedidos Recebidos</h2>
+    <div id="lista-pedidos">
       <p class="msg-info">Carregando pedidos...</p>
     </div>
   </main>
 
-  <div id="modal-producao" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>🖨️ Layout de Produção</h3>
-        <button class="btn-fechar" onclick="fecharModal()">✕ Fechar</button>
-      </div>
-      <div class="producao-info" id="producao-info"></div>
-      <div class="canvas-producao">
-        <canvas id="canvas-producao"></canvas>
-      </div>
-      <div style="text-align: center;">
-        <button class="btn-download" onclick="downloadProducao()">⬇️ Baixar PNG</button>
-        <button class="btn-download" onclick="imprimirProducao()">🖨️ Imprimir</button>
-      </div>
+  <!-- Modal de Layout/Produção -->
+  <div class="modal-overlay" id="modal-producao">
+    <div class="modal">
+      <h3>🖼️ Layout de Produção</h3>
+      <p id="producao-info" style="margin-bottom: 16px;"></p>
+      <canvas id="canvas-producao"></canvas>
+      <br>
+      <button class="modal-fechar" onclick="fecharModal()">❌ Fechar</button>
     </div>
   </div>
 
   <script>
-    const SENHA_OPERADOR = 'AC@2025';
+    let pedidoAtual = null;
 
-    // Exibe a imagem tanto no formato data URL (base64) quanto como arquivo em /uploads
     function getImgSrc(pedido) {
       const img = pedido.imagem || '';
-      if (img.startsWith('data:')) return img;
-      return '/uploads/' + img;
-    }
-
-    function verificarLogin() {
-      const logado = sessionStorage.getItem('painel_logado');
-      if (logado === 'true') {
-        mostrarPainel();
-      }
-    }
-
-    function fazerLogin() {
-      const senha = document.getElementById('senha-input').value;
-      const msg = document.getElementById('login-msg');
-
-      if (senha === SENHA_OPERADOR) {
-        sessionStorage.setItem('painel_logado', 'true');
-        mostrarPainel();
-      } else {
-        msg.innerHTML = '❌ Senha incorreta! Tente novamente.';
-        document.getElementById('senha-input').value = '';
-        document.getElementById('senha-input').focus();
-      }
-    }
-
-    function sair() {
-      sessionStorage.removeItem('painel_logado');
-      document.getElementById('painel-protegido').style.display = 'none';
-      document.getElementById('login-area').style.display = 'block';
-      document.getElementById('senha-input').value = '';
-      document.getElementById('login-area').querySelector('h2').innerText = 'Acesso Restrito';
-      document.getElementById('login-msg').innerHTML = '';
-    }
-
-    function mostrarPainel() {
-      document.getElementById('login-area').style.display = 'none';
-      document.getElementById('painel-protegido').style.display = 'block';
-      carregarPedidos();
+      return img; // já é base64 (data:) ou vazio
     }
 
     async function carregarPedidos() {
-      const res = await fetch('/api/pedidos');
-      const pedidos = await res.json();
-      const div = document.getElementById('pedidos-painel');
+      const div = document.getElementById('lista-pedidos');
+      try {
+        const res = await fetch('/api/pedidos');
+        const pedidos = await res.json();
 
-      if (pedidos.length === 0) {
-        div.innerHTML = '<p class="msg-info">Nenhum pedido recebido ainda.</p>';
-        return;
-      }
+        if (pedidos.length === 0) {
+          div.innerHTML = '<p class="msg-info">Nenhum pedido recebido ainda.</p>';
+          return;
+        }
 
-      div.innerHTML = pedidos.map(p => {
-        const classeFormato = p.formato === 'redondo' ? 'redondo' : 'quadrado';
-        return `
+        div.innerHTML = pedidos.map(p => `
           <div class="pedido-card">
-            <div class="botton-preview">
-              <div class="botton-moldura ${classeFormato}">
-                <img src="${getImgSrc(p)}" alt="${p.produto}">
-              </div>
+            <div class="pedido-imagem">
+              <img src="${getImgSrc(p)}" alt="${p.produto}" onerror="this.style.display='none'">
             </div>
-            <div class="pedido-info">
+            <div class="pedido-detalhes">
               <h3>Pedido #${p.id} — ${p.produto}</h3>
               <p><strong>Cliente:</strong> ${p.cliente_nome}</p>
               <p><strong>Telefone:</strong> ${p.cliente_telefone}</p>
-              <p><strong>Formato:</strong> ${p.formato} | <strong>Tamanho:</strong> ${p.tamanho} cm</p>
-              <p><strong>Quantidade:</strong> ${p.quantidade}</p>
               <p><strong>Barraca:</strong> ${p.barraca}</p>
+              <p><strong>Formato:</strong> ${p.formato} • <strong>Tamanho:</strong> ${p.tamanho} cm</p>
+              <p><strong>Quantidade:</strong> ${p.quantidade}</p>
               <p><strong>Status:</strong> <span class="status ${p.status}">${p.status.replace('_', ' ')}</span></p>
             </div>
             <div class="pedido-acoes">
-              <select onchange="atualizarStatus(${p.id}, this.value)">
-                <option value="recebido" ${p.status === 'recebido' ? 'selected' : ''}>📥 Recebido</option>
-                <option value="em_producao" ${p.status === 'em_producao' ? 'selected' : ''}>🔧 Em produção</option>
-                <option value="pronto" ${p.status === 'pronto' ? 'selected' : ''}>✅ Pronto</option>
-                <option value="entregue" ${p.status === 'entregue' ? 'selected' : ''}>📦 Entregue</option>
-              </select>
-              <button onclick="gerarProducao(${p.id})" class="btn-producao">🖨️ Gerar Layout</button>
-              <button onclick="excluirPedido(${p.id})" class="btn-danger">🗑️ Excluir</button>
+              <button class="btn-layout" onclick="gerarProducao(${p.id})">🖼️ Gerar Layout</button>
+              <button class="btn-status" onclick="avancarStatus(${p.id})">➡️ Avançar Status</button>
+              <button class="btn-excluir" onclick="excluirPedido(${p.id})">🗑️ Excluir</button>
             </div>
           </div>
-        `;
-      }).join('');
+        `).join('');
+      } catch (err) {
+        div.innerHTML = '<p class="msg-info">Erro ao carregar pedidos.</p>';
+      }
     }
-
-    async function atualizarStatus(id, status) {
-      await fetch(`/api/pedidos/${id}/status`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status })
-      });
-      carregarPedidos();
-    }
-
-    async function excluirPedido(id) {
-      if (!confirm('Tem certeza que deseja excluir este pedido?')) return;
-      await fetch(`/api/pedidos/${id}`, { method: 'DELETE' });
-      carregarPedidos();
-    }
-
-    let pedidoAtual = null;
 
     async function gerarProducao(id) {
       const res = await fetch('/api/pedidos');
       const pedidos = await res.json();
       pedidoAtual = pedidos.find(p => p.id === id);
-      
       if (!pedidoAtual) return;
 
       document.getElementById('modal-producao').classList.add('active');
-      
       const info = document.getElementById('producao-info');
       info.innerHTML = `
         <strong>Pedido #${pedidoAtual.id}</strong> — ${pedidoAtual.produto}<br>
         <strong>Cliente:</strong> ${pedidoAtual.cliente_nome} | <strong>Quantidade:</strong> ${pedidoAtual.quantidade}
       `;
 
+      const src = getImgSrc(pedidoAtual);
+      if (!src) {
+        alert('Pedido sem imagem');
+        return;
+      }
+
       const img = new Image();
-      img.onload = () => {
-        gerarCanvas(img, pedidoAtual);
-      };
-      img.src = getImgSrc(pedidoAtual);
+      img.src = src;
+      img.onload = () => desenharLayout(img, pedidoAtual);
+      img.onerror = () => alert('Erro ao carregar a imagem do pedido');
     }
 
-    function gerarCanvas(img, pedido) {
+    function desenharLayout(img, pedido) {
       const canvas = document.getElementById('canvas-producao');
       const ctx = canvas.getContext('2d');
-      
-      const DPI = 37.8;
-      let tamanhoBotton, tamanhoBorda, formato;
-      
+      const tamanho = 600;
+      canvas.width = tamanho;
+      canvas.height = tamanho;
+
+      // Fundo
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, tamanho, tamanho);
+
+      // Máscara circular se redondo
       if (pedido.formato === 'redondo') {
-        tamanhoBotton = 3.5 * DPI;
-        tamanhoBorda = 4.7 * DPI;
-        formato = 'redondo';
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(tamanho / 2, tamanho / 2, tamanho / 2, 0, Math.PI * 2);
+        ctx.clip();
+      }
+
+      // Desenha a imagem cobrindo o canvas
+      const scale = Math.max(tamanho / img.width, tamanho / img.height);
+      const w = img.width * scale;
+      const h = img.height * scale;
+      ctx.drawImage(img, (tamanho - w) / 2, (tamanho - h) / 2, w, h);
+
+      if (pedido.formato === 'redondo') ctx.restore();
+
+      // Linha de corte
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([10, 5]);
+      if (pedido.formato === 'redondo') {
+        ctx.beginPath();
+        ctx.arc(tamanho / 2, tamanho / 2, tamanho / 2 - 3, 0, Math.PI * 2);
+        ctx.stroke();
       } else {
-        tamanhoBotton = 5 * DPI;
-        tamanhoBorda = 6.5 * DPI;
-        formato = 'quadrado';
+        ctx.strokeRect(3, 3, tamanho - 6, tamanho - 6);
       }
-
-      canvas.width = 794;
-      canvas.height = 560;
-
-      const margem = 26.5;
-      const areaUtilLargura = canvas.width - (margem * 2);
-      const areaUtilAltura = canvas.height - (margem * 2);
-
-      const colunas = Math.floor(areaUtilLargura / tamanhoBorda);
-      const linhas = Math.floor(areaUtilAltura / tamanhoBorda);
-      const porFolha = colunas * linhas;
-      const totalFolhas = Math.ceil(pedido.quantidade / porFolha);
-
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      const corFundo = detectarCorFundo(img);
-      let unidadeAtual = 0;
-
-      for (let linha = 0; linha < linhas && unidadeAtual < pedido.quantidade; linha++) {
-        for (let coluna = 0; coluna < colunas && unidadeAtual < pedido.quantidade; coluna++) {
-          const centroX = margem + (coluna * tamanhoBorda) + (tamanhoBorda / 2);
-          const centroY = margem + (linha * tamanhoBorda) + (tamanhoBorda / 2);
-
-          ctx.fillStyle = corFundo;
-          if (formato === 'redondo') {
-            ctx.beginPath();
-            ctx.arc(centroX, centroY, tamanhoBorda / 2, 0, Math.PI * 2);
-            ctx.fill();
-          } else {
-            const raio = tamanhoBorda * 0.1;
-            ctx.beginPath();
-            ctx.moveTo(centroX - tamanhoBorda/2 + raio, centroY - tamanhoBorda/2);
-            ctx.lineTo(centroX + tamanhoBorda/2 - raio, centroY - tamanhoBorda/2);
-            ctx.arcTo(centroX + tamanhoBorda/2, centroY - tamanhoBorda/2, centroX + tamanhoBorda/2, centroY - tamanhoBorda/2 + raio, raio);
-            ctx.lineTo(centroX + tamanhoBorda/2, centroY + tamanhoBorda/2 - raio);
-            ctx.arcTo(centroX + tamanhoBorda/2, centroY + tamanhoBorda/2, centroX + tamanhoBorda/2 - raio, centroY + tamanhoBorda/2, raio);
-            ctx.lineTo(centroX - tamanhoBorda/2 + raio, centroY + tamanhoBorda/2);
-            ctx.arcTo(centroX - tamanhoBorda/2, centroY + tamanhoBorda/2, centroX - tamanhoBorda/2, centroY + tamanhoBorda/2 - raio, raio);
-            ctx.lineTo(centroX - tamanhoBorda/2, centroY - tamanhoBorda/2 + raio);
-            ctx.arcTo(centroX - tamanhoBorda/2, centroY - tamanhoBorda/2, centroX - tamanhoBorda/2 + raio, centroY - tamanhoBorda/2, raio);
-            ctx.closePath();
-            ctx.fill();
-          }
-
-          const escala = Math.min(tamanhoBotton / img.width, tamanhoBotton / img.height);
-          const imgLargura = img.width * escala;
-          const imgAltura = img.height * escala;
-          const imgX = centroX - imgLargura / 2;
-          const imgY = centroY - imgAltura / 2;
-
-          ctx.save();
-          if (formato === 'redondo') {
-            ctx.beginPath();
-            ctx.arc(centroX, centroY, tamanhoBotton / 2, 0, Math.PI * 2);
-            ctx.clip();
-          } else {
-            const raioInterno = tamanhoBotton * 0.1;
-            ctx.beginPath();
-            ctx.moveTo(imgX + raioInterno, imgY);
-            ctx.lineTo(imgX + imgLargura - raioInterno, imgY);
-            ctx.arcTo(imgX + imgLargura, imgY, imgX + imgLargura, imgY + raioInterno, raioInterno);
-            ctx.lineTo(imgX + imgLargura, imgY + imgAltura - raioInterno);
-            ctx.arcTo(imgX + imgLargura, imgY + imgAltura, imgX + imgLargura - raioInterno, imgY + imgAltura, raioInterno);
-            ctx.lineTo(imgX + raioInterno, imgY + imgAltura);
-            ctx.arcTo(imgX, imgY + imgAltura, imgX, imgY + imgAltura - raioInterno, raioInterno);
-            ctx.lineTo(imgX, imgY + raioInterno);
-            ctx.arcTo(imgX, imgY, imgX + raioInterno, imgY, raioInterno);
-            ctx.closePath();
-            ctx.clip();
-          }
-
-          ctx.drawImage(img, imgX, imgY, imgLargura, imgAltura);
-          ctx.restore();
-
-          ctx.strokeStyle = '#000';
-          ctx.lineWidth = 1;
-          if (formato === 'redondo') {
-            ctx.beginPath();
-            ctx.arc(centroX, centroY, tamanhoBorda / 2, 0, Math.PI * 2);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.arc(centroX, centroY, tamanhoBotton / 2, 0, Math.PI * 2);
-            ctx.stroke();
-          } else {
-            const raio = tamanhoBorda * 0.1;
-            ctx.beginPath();
-            ctx.moveTo(centroX - tamanhoBorda/2 + raio, centroY - tamanhoBorda/2);
-            ctx.lineTo(centroX + tamanhoBorda/2 - raio, centroY - tamanhoBorda/2);
-            ctx.arcTo(centroX + tamanhoBorda/2, centroY - tamanhoBorda/2, centroX + tamanhoBorda/2, centroY - tamanhoBorda/2 + raio, raio);
-            ctx.lineTo(centroX + tamanhoBorda/2, centroY + tamanhoBorda/2 - raio);
-            ctx.arcTo(centroX + tamanhoBorda/2, centroY + tamanhoBorda/2, centroX + tamanhoBorda/2 - raio, centroY + tamanhoBorda/2, raio);
-            ctx.lineTo(centroX - tamanhoBorda/2 + raio, centroY + tamanhoBorda/2);
-            ctx.arcTo(centroX - tamanhoBorda/2, centroY + tamanhoBorda/2, centroX - tamanhoBorda/2, centroY + tamanhoBorda/2 - raio, raio);
-            ctx.lineTo(centroX - tamanhoBorda/2, centroY - tamanhoBorda/2 + raio);
-            ctx.arcTo(centroX - tamanhoBorda/2, centroY - tamanhoBorda/2, centroX - tamanhoBorda/2 + raio, centroY - tamanhoBorda/2, raio);
-            ctx.closePath();
-            ctx.stroke();
-
-            const raioInterno = tamanhoBotton * 0.1;
-            ctx.beginPath();
-            ctx.moveTo(imgX + raioInterno, imgY);
-            ctx.lineTo(imgX + imgLargura - raioInterno, imgY);
-            ctx.arcTo(imgX + imgLargura, imgY, imgX + imgLargura, imgY + raioInterno, raioInterno);
-            ctx.lineTo(imgX + imgLargura, imgY + imgAltura - raioInterno);
-            ctx.arcTo(imgX + imgLargura, imgY + imgAltura, imgX + imgLargura - raioInterno, imgY + imgAltura, raioInterno);
-            ctx.lineTo(imgX + raioInterno, imgY + imgAltura);
-            ctx.arcTo(imgX, imgY + imgAltura, imgX, imgY + imgAltura - raioInterno, raioInterno);
-            ctx.lineTo(imgX, imgY + raioInterno);
-            ctx.arcTo(imgX, imgY, imgX + raioInterno, imgY, raioInterno);
-            ctx.closePath();
-            ctx.stroke();
-          }
-
-          unidadeAtual++;
-        }
-      }
-    }
-
-    function detectarCorFundo(img) {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
-      
-      const amostras = [];
-      const tamanho = 10;
-      
-      for (let y = 0; y < tamanho; y++) {
-        for (let x = 0; x < tamanho; x++) {
-          const pixel = ctx.getImageData(x, y, 1, 1).data;
-          amostras.push([pixel[0], pixel[1], pixel[2]]);
-        }
-      }
-      
-      for (let y = 0; y < tamanho; y++) {
-        for (let x = img.width - tamanho; x < img.width; x++) {
-          const pixel = ctx.getImageData(x, y, 1, 1).data;
-          amostras.push([pixel[0], pixel[1], pixel[2]]);
-        }
-      }
-      
-      let r = 0, g = 0, b = 0;
-      amostras.forEach(([pr, pg, pb]) => {
-        r += pr;
-        g += pg;
-        b += pb;
-      });
-      r = Math.round(r / amostras.length);
-      g = Math.round(g / amostras.length);
-      b = Math.round(b / amostras.length);
-      
-      return `rgb(${r}, ${g}, ${b})`;
+      ctx.setLineDash([]);
     }
 
     function fecharModal() {
       document.getElementById('modal-producao').classList.remove('active');
     }
 
-    function downloadProducao() {
-      const canvas = document.getElementById('canvas-producao');
-      const link = document.createElement('a');
-      link.download = `botton-${pedidoAtual.id}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+    async function avancarStatus(id) {
+      const ordem = ['recebido', 'em_producao', 'pronto', 'entregue'];
+      const res = await fetch('/api/pedidos');
+      const pedidos = await res.json();
+      const pedido = pedidos.find(p => p.id === id);
+      if (!pedido) return;
+      const idx = ordem.indexOf(pedido.status);
+      const novo = idx >= 0 && idx < ordem.length - 1 ? ordem[idx + 1] : ordem[idx];
+      await fetch(`/api/pedidos/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: novo })
+      });
+      carregarPedidos();
     }
 
-    function imprimirProducao() {
-      const canvas = document.getElementById('canvas-producao');
-      const dataUrl = canvas.toDataURL('image/png');
-
-      const janela = window.open('', '_blank', 'width=900,height=700');
-      if (!janela) {
-        alert('Permita pop-ups do navegador para poder imprimir.');
-        return;
-      }
-
-      janela.document.write(
-        '<!DOCTYPE html>' +
-        '<html lang="pt-BR">' +
-        '<head>' +
-        '<meta charset="UTF-8">' +
-        '<title>Imprimir - Pedido #' + pedidoAtual.id + '</title>' +
-        '<style>' +
-        '@page { size: A5 landscape; margin: 0; }' +
-        'html, body { margin: 0; padding: 0; width: 210mm; height: 148mm; overflow: hidden; }' +
-        'body { display: flex; align-items: center; justify-content: center; background: #fff; }' +
-        'img { width: 210mm; height: 148mm; object-fit: contain; display: block; }' +
-        '</style>' +
-        '</head>' +
-        '<body><img src="' + dataUrl + '" onload="setTimeout(function(){ window.focus(); window.print(); }, 300);"></body>' +
-        '</html>'
-      );
-      janela.document.close();
-      janela.focus();
+    async function excluirPedido(id) {
+      if (!confirm('Excluir este pedido?')) return;
+      await fetch(`/api/pedidos/${id}`, { method: 'DELETE' });
+      carregarPedidos();
     }
 
-    verificarLogin();
-    setInterval(() => {
-      if (sessionStorage.getItem('painel_logado') === 'true') {
-        carregarPedidos();
-      }
-    }, 10000);
+    carregarPedidos();
   </script>
 </body>
 </html>
