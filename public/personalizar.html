@@ -15,40 +15,48 @@
     }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { background: var(--bg); color: var(--text); min-height: 100vh; }
-    .container { max-width: 900px; margin: 0 auto; padding: 20px; }
-
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
     header { background: var(--primary); color: white; padding: 15px 0; }
     header .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
     header h1 { font-size: 28px; }
     nav a { color: white; margin-left: 20px; text-decoration: none; font-weight: 500; padding: 6px 12px; border-radius: 6px; }
     nav a:hover { background: rgba(255,255,255,0.2); }
-
     h2 { margin: 30px 0 20px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+    .card h3 { margin-bottom: 16px; color: var(--text); font-size: 18px; }
+
+    .preview-area { display: flex; gap: 24px; flex-wrap: wrap; }
+    .preview-moldura { flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
+    .preview-moldura.redondo { width: 300px; height: 300px; border-radius: 50%; background: #e2e8f0; overflow: hidden; border: 3px solid var(--border); }
+    .preview-moldura.quadrado { width: 300px; height: 300px; border-radius: 12px; background: #e2e8f0; overflow: hidden; border: 3px solid var(--border); }
+    .preview-moldura img { width: 100%; height: 100%; object-fit: cover; }
+
+    .controles { flex: 1; min-width: 250px; display: flex; flex-direction: column; gap: 16px; }
+    .controles label { font-weight: 600; font-size: 14px; color: var(--text); }
+    .controles input[type="file"] { padding: 8px; border: 1px solid var(--border); border-radius: 6px; width: 100%; }
+    .controles input[type="range"] { width: 100%; }
+    .zoom-label { font-size: 13px; color: #64748b; }
+
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .form-grid .full { grid-column: 1 / -1; }
-    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; }
-    input, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; }
-    input:focus, select:focus { outline: 2px solid var(--primary); border-color: var(--primary); }
-    button { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px; }
-    button:hover { background: var(--primary-dark); }
-    button:disabled { background: #94a3b8; cursor: not-allowed; }
-    .btn-secondary { background: #64748b; }
-    .btn-secondary:hover { background: #475569; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-weight: 600; font-size: 14px; }
+    .form-group input, .form-group select { padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
 
-    .editor-area { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 20px; }
-    .moldura { width: 350px; height: 350px; background: #e2e8f0; border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center; position: relative; touch-action: none; cursor: grab; flex-shrink: 0; }
-    .moldura.redondo { border-radius: 50%; }
-    .moldura.quadrado { border-radius: 12px; }
-    .moldura img { width: 100%; height: 100%; object-fit: contain; user-select: none; pointer-events: none; }
-    .editor-controles { flex: 1; min-width: 280px; }
-    .botao-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .botoes-acao { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+    .btn { padding: 12px 24px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 14px; }
+    .btn-primary { background: #10b981; color: white; }
+    .btn-primary:hover { background: #059669; }
+    .btn-secondary { background: var(--primary); color: white; }
+    .btn-secondary:hover { background: var(--primary-dark); }
 
     @media (max-width: 768px) {
       header .container { flex-direction: column; gap: 10px; }
       nav a { margin: 0 5px; }
       .form-grid { grid-template-columns: 1fr; }
-      .editor-area { flex-direction: column; align-items: center; }
+      .preview-area { flex-direction: column; }
     }
   </style>
 </head>
@@ -65,359 +73,193 @@
   </header>
 
   <main class="container">
-    <h2>🧑‍🎨 Personalizar Botton</h2>
+    <h2>🎨 Personalizar Botton</h2>
 
     <div class="card">
-      <div class="editor-area">
-        <div class="moldura redondo" id="moldura">
-          <img id="preview-img" alt="Pré-visualização" style="display: none;">
+      <h3>🖼️ Sua Imagem</h3>
+      <div class="preview-area">
+        <div class="preview-moldura redondo" id="preview-moldura">
+          <img id="preview-img" src="" alt="Prévia" style="display:none;">
         </div>
-        <div class="editor-controles">
-          <h3 style="margin-bottom: 12px;">📷 Sua Imagem</h3>
-          <input type="file" id="upload" accept="image/*">
-          <div style="margin: 16px 0;">
-            <label for="zoom-slider">🔍 Zoom: <span id="zoom-valor">100%</span></label>
-            <input type="range" id="zoom-slider" min="0.3" max="5" step="0.1" value="1" style="width: 100%;">
+        <div class="controles">
+          <div>
+            <label>📷 Escolher Imagem</label>
+            <input type="file" id="input-imagem" accept="image/*">
           </div>
-          <div class="botao-row">
-            <button type="button" class="btn-secondary" id="btn-reset">🔄 Resetar</button>
+          <div>
+            <label>🔍 Zoom: <span id="zoom-valor">100</span>%</label>
+            <input type="range" id="zoom-range" min="50" max="400" value="100">
           </div>
+          <button class="btn btn-secondary" onclick="resetarZoom()" style="width:fit-content;">🔄 Resetar</button>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <h3 style="margin-bottom: 16px;">📝 Detalhes do Pedido</h3>
+      <h3>📝 Detalhes do Pedido</h3>
       <div class="form-grid">
-        <div>
-          <label for="cliente_nome">Nome do Cliente *</label>
-          <input type="text" id="cliente_nome" placeholder="Ex.: Maria Silva">
+        <div class="form-group">
+          <label>Nome do Cliente *</label>
+          <input type="text" id="cliente-nome" placeholder="Seu nome">
         </div>
-        <div>
-          <label for="cliente_telefone">Telefone *</label>
-          <input type="text" id="cliente_telefone" placeholder="Ex.: 16999999999">
+        <div class="form-group">
+          <label>Telefone *</label>
+          <input type="text" id="cliente-telefone" placeholder="(00) 00000-0000">
         </div>
-        <div>
-          <label for="barraca">Barraca</label>
+        <div class="form-group">
+          <label>Barraca</label>
           <select id="barraca">
             <option value="Barraca 1">Barraca 1</option>
             <option value="Barraca 2">Barraca 2</option>
             <option value="Barraca 3">Barraca 3</option>
           </select>
         </div>
-        <div>
-          <label for="produto">Produto</label>
-          <select id="produto-select">
+        <div class="form-group">
+          <label>Produto</label>
+          <select id="produto">
             <option value="Botton Redondo">Botton Redondo</option>
             <option value="Botton Quadrado">Botton Quadrado</option>
           </select>
         </div>
-        <div>
-          <label for="formato">Formato</label>
+        <div class="form-group">
+          <label>Formato</label>
           <select id="formato">
             <option value="redondo">Redondo</option>
             <option value="quadrado">Quadrado</option>
           </select>
         </div>
-        <div>
-          <label for="tamanho">Tamanho</label>
+        <div class="form-group">
+          <label>Tamanho</label>
           <select id="tamanho">
-            <option value="3x3">3x3 cm</option>
-            <option value="3.5x3.5">3,5x3,5 cm</option>
-            <option value="4x4">4x4 cm</option>
+            <option value="3,5x3,5">3,5x3,5 cm</option>
             <option value="5x5">5x5 cm</option>
+            <option value="7x7">7x7 cm</option>
           </select>
         </div>
-        <div class="full">
-          <label for="quantidade">Quantidade</label>
-          <input type="number" id="quantidade" min="1" value="1">
+        <div class="form-group full">
+          <label>Quantidade</label>
+          <input type="number" id="quantidade" value="1" min="1">
         </div>
       </div>
-      <div class="botao-row" style="margin-top: 24px;">
-        <button id="btn-continuar" style="background: #10b981;">🛒 Finalizar e Continuar Comprando</button>
-        <button id="btn-finalizar">✅ Finalizar Pedido</button>
+      <div class="botoes-acao">
+        <button class="btn btn-primary" onclick="finalizarPedido(true)">🛒 Finalizar e Continuar Comprando</button>
+        <button class="btn btn-secondary" onclick="finalizarPedido(false)">✅ Finalizar Pedido</button>
       </div>
     </div>
   </main>
 
   <script>
-    const upload = document.getElementById('upload');
+    const inputImagem = document.getElementById('input-imagem');
     const previewImg = document.getElementById('preview-img');
-    const formato = document.getElementById('formato');
-    const moldura = document.getElementById('moldura');
-    const btnFinalizar = document.getElementById('btn-finalizar');
-    const btnReset = document.getElementById('btn-reset');
-    const zoomSlider = document.getElementById('zoom-slider');
+    const previewMoldura = document.getElementById('preview-moldura');
+    const zoomRange = document.getElementById('zoom-range');
     const zoomValor = document.getElementById('zoom-valor');
+    const produtoSelect = document.getElementById('produto');
+    const formatoSelect = document.getElementById('formato');
+    const tamanhoSelect = document.getElementById('tamanho');
 
-    let imageState = { x: 0, y: 0, scale: 1, isDragging: false, startX: 0, startY: 0 };
-    let imagemOriginal = null;
-    let imagemBase64 = null;
+    let imagemBase64 = '';
+    let zoomAtual = 100;
 
-    upload.addEventListener('change', (e) => {
+    // Troca de produto → ajusta formato e tamanho automaticamente
+    produtoSelect.addEventListener('change', function() {
+      if (this.value === 'Botton Quadrado') {
+        formatoSelect.value = 'quadrado';
+        tamanhoSelect.value = '5x5';
+        previewMoldura.className = 'preview-moldura quadrado';
+      } else {
+        formatoSelect.value = 'redondo';
+        tamanhoSelect.value = '3,5x3,5';
+        previewMoldura.className = 'preview-moldura redondo';
+      }
+    });
+
+    inputImagem.addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = (event) => {
-        imagemBase64 = event.target.result; // salva o base64
-        const img = new Image();
-        img.onload = () => {
-          imagemOriginal = img;
-          previewImg.src = event.target.result;
-          previewImg.style.display = 'block';
-          imageState = { x: 0, y: 0, scale: 1, isDragging: false, startX: 0, startY: 0 };
-          zoomSlider.value = 1;
-          atualizarTransform();
-        };
-        img.src = event.target.result;
+      reader.onload = function(ev) {
+        imagemBase64 = ev.target.result;
+        previewImg.src = imagemBase64;
+        previewImg.style.display = 'block';
+        aplicarZoom();
       };
       reader.readAsDataURL(file);
     });
 
-    function atualizarTransform() {
-      previewImg.style.transform = `translate(${imageState.x}px, ${imageState.y}px) scale(${imageState.scale})`;
-      zoomValor.innerText = Math.round(imageState.scale * 100) + '%';
+    zoomRange.addEventListener('input', function() {
+      zoomAtual = parseInt(this.value);
+      zoomValor.textContent = zoomAtual;
+      aplicarZoom();
+    });
+
+    function aplicarZoom() {
+      const scale = zoomAtual / 100;
+      previewImg.style.transform = `scale(${scale})`;
+      previewImg.style.transformOrigin = 'center center';
     }
 
-    // DRAG - Mouse
-    moldura.addEventListener('mousedown', (e) => {
-      if (!previewImg.src) return;
-      imageState.isDragging = true;
-      imageState.startX = e.clientX - imageState.x;
-      imageState.startY = e.clientY - imageState.y;
-      e.preventDefault();
-    });
-    document.addEventListener('mousemove', (e) => {
-      if (!imageState.isDragging) return;
-      imageState.x = e.clientX - imageState.startX;
-      imageState.y = e.clientY - imageState.startY;
-      atualizarTransform();
-    });
-    document.addEventListener('mouseup', () => { imageState.isDragging = false; });
+    function resetarZoom() {
+      zoomAtual = 100;
+      zoomRange.value = 100;
+      zoomValor.textContent = '100';
+      aplicarZoom();
+    }
 
-    // DRAG - Touch
-    moldura.addEventListener('touchstart', (e) => {
-      if (!previewImg.src || e.touches.length !== 1) return;
-      const touch = e.touches[0];
-      imageState.isDragging = true;
-      imageState.startX = touch.clientX - imageState.x;
-      imageState.startY = touch.clientY - imageState.y;
-    }, { passive: true });
-    moldura.addEventListener('touchmove', (e) => {
-      if (!imageState.isDragging || e.touches.length !== 1) return;
-      const touch = e.touches[0];
-      imageState.x = touch.clientX - imageState.startX;
-      imageState.y = touch.clientY - imageState.startY;
-      atualizarTransform();
-    }, { passive: true });
-    moldura.addEventListener('touchend', () => { imageState.isDragging = false; });
+    async function finalizarPedido(continuar) {
+      const nome = document.getElementById('cliente-nome').value.trim();
+      const telefone = document.getElementById('cliente-telefone').value.trim();
+      const barraca = document.getElementById('barraca').value;
+      const produto = produtoSelect.value;
+      const formato = formatoSelect.value;
+      const tamanho = tamanhoSelect.value;
+      const quantidade = document.getElementById('quantidade').value;
 
-    // ZOOM - Scroll
-    moldura.addEventListener('wheel', (e) => {
-      if (!previewImg.src) return;
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      imageState.scale = Math.max(0.3, Math.min(5, imageState.scale + delta));
-      zoomSlider.value = imageState.scale;
-      atualizarTransform();
-    }, { passive: false });
-    zoomSlider.addEventListener('input', (e) => {
-      imageState.scale = parseFloat(e.target.value);
-      atualizarTransform();
-    });
-
-    btnReset.addEventListener('click', () => {
-      imageState.x = 0; imageState.y = 0; imageState.scale = 1;
-      zoomSlider.value = 1;
-      atualizarTransform();
-    });
-
-    formato.addEventListener('change', () => {
-      moldura.classList.remove('redondo', 'quadrado');
-      moldura.classList.add(formato.value);
-    });
-
-    // Quando o usuário troca o produto, ajusta Formato e Tamanho automaticamente
-    document.getElementById('produto-select').addEventListener('change', (e) => {
-      const produtoSel = e.target.value;
-      if (produtoSel.includes('Quadrado')) {
-        formato.value = 'quadrado';
-        document.getElementById('tamanho').value = '5x5';
-      } else {
-        formato.value = 'redondo';
-        document.getElementById('tamanho').value = '3.5x3.5';
+      if (!nome || !telefone) {
+        alert('Preencha nome e telefone.');
+        return;
       }
-      moldura.classList.remove('redondo', 'quadrado');
-      moldura.classList.add(formato.value);
-    });
+      if (!imagemBase64) {
+        alert('Selecione uma imagem.');
+        return;
+      }
 
-    // Recorta a imagem no canvas e retorna data URL (base64)
-    function recortarImagem() {
-      return new Promise((resolve, reject) => {
-        if (!imagemOriginal) { reject(new Error('Nenhuma imagem carregada')); return; }
-
-        const tamanhos = { '3x3': 354, '3.5x3.5': 413, '4x4': 472, '5x5': 591 };
-        const tamanhoFinal = tamanhos[document.getElementById('tamanho').value] || 354;
-        const formatoSelecionado = formato.value;
-        const MOLDURA = 350;
-        const img = imagemOriginal;
-
-        const scaleToFit = Math.min(MOLDURA / img.width, MOLDURA / img.height);
-        const displayW = img.width * scaleToFit;
-        const displayH = img.height * scaleToFit;
-
-        const canvas = document.createElement('canvas');
-        canvas.width = tamanhoFinal;
-        canvas.height = tamanhoFinal;
-        const ctx = canvas.getContext('2d');
-
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, tamanhoFinal, tamanhoFinal);
-
-        if (formatoSelecionado === 'redondo') {
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(tamanhoFinal / 2, tamanhoFinal / 2, tamanhoFinal / 2, 0, Math.PI * 2);
-          ctx.clip();
-        }
-
-        const ratio = tamanhoFinal / MOLDURA;
-        const finalDisplayW = displayW * ratio;
-        const finalDisplayH = displayH * ratio;
-        const cx = tamanhoFinal / 2;
-        const cy = tamanhoFinal / 2;
-        const scaledW = finalDisplayW * imageState.scale;
-        const scaledH = finalDisplayH * imageState.scale;
-        const drawX = cx - scaledW / 2 + imageState.x * ratio;
-        const drawY = cy - scaledH / 2 + imageState.y * ratio;
-
-        ctx.drawImage(img, drawX, drawY, scaledW, scaledH);
-
-        if (formatoSelecionado === 'redondo') ctx.restore();
-
-        resolve(canvas.toDataURL('image/png', 0.95));
-      });
-    }
-
-    // Salva dados do cliente no localStorage para reaproveitar no próximo pedido
-    function salvarDadosCliente() {
-      localStorage.setItem('cliente_nome', document.getElementById('cliente_nome').value.trim());
-      localStorage.setItem('cliente_telefone', document.getElementById('cliente_telefone').value.trim());
-      localStorage.setItem('barraca', document.getElementById('barraca').value);
-    }
-
-    // Restaura dados do cliente ao carregar a página
-    function restaurarDadosCliente() {
-      const nome = localStorage.getItem('cliente_nome');
-      const tel = localStorage.getItem('cliente_telefone');
-      const barraca = localStorage.getItem('barraca');
-      if (nome) document.getElementById('cliente_nome').value = nome;
-      if (tel) document.getElementById('cliente_telefone').value = tel;
-      if (barraca) document.getElementById('barraca').value = barraca;
-    }
-    restaurarDadosCliente();
-
-    async function enviarPedido(continuar) {
-      const clienteNome = document.getElementById('cliente_nome').value.trim();
-      const clienteTel = document.getElementById('cliente_telefone').value.trim();
-      if (!clienteNome || !clienteTel) { alert('Preencha nome e telefone.'); return; }
-      if (!imagemOriginal) { alert('Envie uma imagem primeiro.'); return; }
-
-      const btn = document.getElementById(continuar ? 'btn-continuar' : 'btn-finalizar');
-      btn.disabled = true;
-      btn.innerText = '⏳ Processando...';
+      const pedido = {
+        cliente_nome: nome,
+        cliente_telefone: telefone,
+        barraca,
+        produto,
+        formato,
+        tamanho,
+        quantidade: parseInt(quantidade),
+        imagem: imagemBase64,
+        status: 'recebido'
+      };
 
       try {
-        const imagemRecortada = await recortarImagem();
-        const pedido = {
-          cliente_nome: clienteNome,
-          cliente_telefone: clienteTel,
-          barraca: document.getElementById('barraca').value,
-          produto: document.getElementById('produto-select').value,
-          formato: formato.value,
-          tamanho: document.getElementById('tamanho').value,
-          quantidade: parseInt(document.getElementById('quantidade').value, 10),
-          imagem: imagemRecortada
-        };
-
         const res = await fetch('/api/pedidos', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(pedido)
         });
-
-        const data = await res.json();
-        if (data.id) {
-          salvarDadosCliente();
-          alert(`Pedido enviado! Código: #${data.id}`);
-          if (continuar) {
-            // Reseta só a imagem e quantidade para o próximo pedido
-            upload.value = '';
-            imagemOriginal = null;
-            previewImg.style.display = 'none';
-            document.getElementById('quantidade').value = '1';
-            window.location.href = '/';
-          } else {
-            window.location.href = '/carrinho.html';
-          }
-        } else {
-          alert('Erro: ' + (data.error || 'desconhecido'));
-        }
-      } catch (err) {
-        alert('Erro ao processar: ' + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.innerText = continuar ? '🛒 Finalizar e Continuar Comprando' : '✅ Finalizar Pedido';
-      }
-    }
-
-    document.getElementById('btn-continuar').addEventListener('click', () => enviarPedido(true));
-    btnFinalizar.addEventListener('click', () => enviarPedido(false));
-
-    // FINALIZAR PEDIDO — envia JSON com base64 (mantido para compatibilidade)
-    btnFinalizar.addEventListener('click', async () => {
-      const clienteNome = document.getElementById('cliente_nome').value.trim();
-      const clienteTel = document.getElementById('cliente_telefone').value.trim();
-      if (!clienteNome || !clienteTel) { alert('Preencha nome e telefone.'); return; }
-      if (!imagemOriginal) { alert('Envie uma imagem primeiro.'); return; }
-
-      btnFinalizar.disabled = true;
-      btnFinalizar.innerText = '⏳ Processando...';
-
-      try {
-        const imagemRecortada = await recortarImagem();
-
-        const pedido = {
-          cliente_nome: clienteNome,
-          cliente_telefone: clienteTel,
-          barraca: document.getElementById('barraca').value,
-          produto: document.getElementById('produto-select').value,
-          formato: formato.value,
-          tamanho: document.getElementById('tamanho').value,
-          quantidade: parseInt(document.getElementById('quantidade').value, 10),
-          imagem: imagemRecortada // data URL com base64
-        };
-
-        const res = await fetch('/api/pedidos', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(pedido)
-        });
-
-        const data = await res.json();
-        if (data.id) {
-          alert(`Pedido enviado! Código: #${data.id}`);
+        if (!res.ok) throw new Error('Erro ao salvar');
+        alert('Pedido enviado com sucesso!');
+        if (!continuar) {
           window.location.href = '/carrinho.html';
         } else {
-          alert('Erro: ' + (data.error || 'desconhecido'));
+          // Limpa para novo pedido
+          inputImagem.value = '';
+          previewImg.style.display = 'none';
+          imagemBase64 = '';
+          resetarZoom();
+          document.getElementById('cliente-nome').value = '';
+          document.getElementById('cliente-telefone').value = '';
+          document.getElementById('quantidade').value = '1';
         }
       } catch (err) {
-        alert('Erro ao processar: ' + err.message);
-      } finally {
-        btnFinalizar.disabled = false;
-        btnFinalizar.innerText = '✅ Finalizar Pedido';
+        alert('Erro ao enviar pedido: ' + err.message);
       }
-    });
+    }
   </script>
 </body>
 </html>
