@@ -134,6 +134,7 @@
         </div>
       </div>
       <div class="botao-row" style="margin-top: 24px;">
+        <button id="btn-continuar" style="background: #10b981;">🛒 Finalizar e Continuar Comprando</button>
         <button id="btn-finalizar">✅ Finalizar Pedido</button>
       </div>
     </div>
@@ -284,7 +285,82 @@
       });
     }
 
-    // FINALIZAR PEDIDO — envia JSON com base64
+    // Salva dados do cliente no localStorage para reaproveitar no próximo pedido
+    function salvarDadosCliente() {
+      localStorage.setItem('cliente_nome', document.getElementById('cliente_nome').value.trim());
+      localStorage.setItem('cliente_telefone', document.getElementById('cliente_telefone').value.trim());
+      localStorage.setItem('barraca', document.getElementById('barraca').value);
+    }
+
+    // Restaura dados do cliente ao carregar a página
+    function restaurarDadosCliente() {
+      const nome = localStorage.getItem('cliente_nome');
+      const tel = localStorage.getItem('cliente_telefone');
+      const barraca = localStorage.getItem('barraca');
+      if (nome) document.getElementById('cliente_nome').value = nome;
+      if (tel) document.getElementById('cliente_telefone').value = tel;
+      if (barraca) document.getElementById('barraca').value = barraca;
+    }
+    restaurarDadosCliente();
+
+    async function enviarPedido(continuar) {
+      const clienteNome = document.getElementById('cliente_nome').value.trim();
+      const clienteTel = document.getElementById('cliente_telefone').value.trim();
+      if (!clienteNome || !clienteTel) { alert('Preencha nome e telefone.'); return; }
+      if (!imagemOriginal) { alert('Envie uma imagem primeiro.'); return; }
+
+      const btn = document.getElementById(continuar ? 'btn-continuar' : 'btn-finalizar');
+      btn.disabled = true;
+      btn.innerText = '⏳ Processando...';
+
+      try {
+        const imagemRecortada = await recortarImagem();
+        const pedido = {
+          cliente_nome: clienteNome,
+          cliente_telefone: clienteTel,
+          barraca: document.getElementById('barraca').value,
+          produto: document.getElementById('produto-select').value,
+          formato: formato.value,
+          tamanho: document.getElementById('tamanho').value,
+          quantidade: parseInt(document.getElementById('quantidade').value, 10),
+          imagem: imagemRecortada
+        };
+
+        const res = await fetch('/api/pedidos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(pedido)
+        });
+
+        const data = await res.json();
+        if (data.id) {
+          salvarDadosCliente();
+          alert(`Pedido enviado! Código: #${data.id}`);
+          if (continuar) {
+            // Reseta só a imagem e quantidade para o próximo pedido
+            upload.value = '';
+            imagemOriginal = null;
+            previewImg.style.display = 'none';
+            document.getElementById('quantidade').value = '1';
+            window.location.href = '/';
+          } else {
+            window.location.href = '/carrinho.html';
+          }
+        } else {
+          alert('Erro: ' + (data.error || 'desconhecido'));
+        }
+      } catch (err) {
+        alert('Erro ao processar: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = continuar ? '🛒 Finalizar e Continuar Comprando' : '✅ Finalizar Pedido';
+      }
+    }
+
+    document.getElementById('btn-continuar').addEventListener('click', () => enviarPedido(true));
+    btnFinalizar.addEventListener('click', () => enviarPedido(false));
+
+    // FINALIZAR PEDIDO — envia JSON com base64 (mantido para compatibilidade)
     btnFinalizar.addEventListener('click', async () => {
       const clienteNome = document.getElementById('cliente_nome').value.trim();
       const clienteTel = document.getElementById('cliente_telefone').value.trim();
