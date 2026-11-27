@@ -5,58 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Personalizar Botton - AC Grafic</title>
   <style>
-    :root {
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --text: #1e293b;
-      --border: #cbd5e1;
-    }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-    body { background: var(--bg); color: var(--text); min-height: 100vh; }
+    body { background: #f8fafc; color: #1e293b; min-height: 100vh; }
     .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-    header { background: var(--primary); color: white; padding: 15px 0; }
-    header .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+    header { background: #2563eb; color: white; padding: 15px 0; }
+    header .container { display: flex; justify-content: space-between; align-items: center; }
     header h1 { font-size: 28px; }
-    nav a { color: white; margin-left: 20px; text-decoration: none; font-weight: 500; padding: 6px 12px; border-radius: 6px; }
-    nav a:hover { background: rgba(255,255,255,0.2); }
+    nav a { color: white; margin-left: 20px; text-decoration: none; font-weight: 500; }
+    nav a:hover { text-decoration: underline; }
     h2 { margin: 30px 0 20px; }
 
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
-    .card h3 { margin-bottom: 16px; color: var(--text); font-size: 18px; }
+    .card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .preview-area { display: flex; gap: 30px; align-items: flex-start; flex-wrap: wrap; }
+    .preview-box { flex: 1; min-width: 300px; display: flex; justify-content: center; align-items: center; padding: 20px; background: #f1f5f9; border-radius: 8px; }
+    .preview-moldura { background: #e2e8f0; padding: 20px; display: flex; justify-content: center; align-items: center; }
+    .preview-moldura.redondo { border-radius: 50%; }
+    .preview-moldura.quadrado { border-radius: 12px; }
+    .preview-moldura img { max-width: 250px; max-height: 250px; object-fit: cover; }
+    .preview-moldura.redondo img { border-radius: 50%; }
+    .preview-moldura.quadrado img { border-radius: 12px; }
 
-    .preview-area { display: flex; gap: 24px; flex-wrap: wrap; }
-    .preview-moldura { flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
-    .preview-moldura.redondo { width: 300px; height: 300px; border-radius: 50%; background: #e2e8f0; overflow: hidden; border: 3px solid var(--border); }
-    .preview-moldura.quadrado { width: 300px; height: 300px; border-radius: 12px; background: #e2e8f0; overflow: hidden; border: 3px solid var(--border); }
-    .preview-moldura img { width: 100%; height: 100%; object-fit: cover; }
+    .controls { flex: 1; min-width: 300px; }
+    .controls label { display: block; margin: 15px 0 8px; font-weight: 500; }
+    .controls input[type="file"] { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; }
+    .controls input[type="range"] { width: 100%; margin: 10px 0; }
+    .zoom-label { font-size: 14px; color: #64748b; }
 
-    .controles { flex: 1; min-width: 250px; display: flex; flex-direction: column; gap: 16px; }
-    .controles label { font-weight: 600; font-size: 14px; color: var(--text); }
-    .controles input[type="file"] { padding: 8px; border: 1px solid var(--border); border-radius: 6px; width: 100%; }
-    .controles input[type="range"] { width: 100%; }
-    .zoom-label { font-size: 13px; color: #64748b; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { margin-bottom: 8px; font-weight: 500; }
+    .form-group input, .form-group select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: #2563eb; }
 
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .form-grid .full { grid-column: 1 / -1; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group label { font-weight: 600; font-size: 14px; }
-    .form-group input, .form-group select { padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
-    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); }
-
-    .botoes-acao { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
-    .btn { padding: 12px 24px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; font-size: 14px; }
-    .btn-primary { background: #10b981; color: white; }
-    .btn-primary:hover { background: #059669; }
-    .btn-secondary { background: var(--primary); color: white; }
-    .btn-secondary:hover { background: var(--primary-dark); }
+    .btn-group { display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
+    .btn { padding: 12px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+    .btn-primary { background: #2563eb; color: white; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-success { background: #10b981; color: white; }
+    .btn-success:hover { background: #059669; }
+    .btn-secondary { background: #64748b; color: white; }
+    .btn-secondary:hover { background: #475569; }
 
     @media (max-width: 768px) {
       header .container { flex-direction: column; gap: 10px; }
-      nav a { margin: 0 5px; }
-      .form-grid { grid-template-columns: 1fr; }
+      nav a { margin: 0 10px; }
       .preview-area { flex-direction: column; }
+      .btn-group { flex-direction: column; }
+      .btn { width: 100%; }
     }
   </style>
 </head>
@@ -76,21 +71,20 @@
     <h2>🎨 Personalizar Botton</h2>
 
     <div class="card">
-      <h3>🖼️ Sua Imagem</h3>
       <div class="preview-area">
-        <div class="preview-moldura redondo" id="preview-moldura">
-          <img id="preview-img" src="" alt="Prévia" style="display:none;">
+        <div class="preview-box">
+          <div class="preview-moldura redondo" id="preview-moldura">
+            <img id="preview-img" src="" alt="Preview" style="display: none;">
+          </div>
         </div>
-        <div class="controles">
-          <div>
-            <label>📷 Escolher Imagem</label>
-            <input type="file" id="input-imagem" accept="image/*">
-          </div>
-          <div>
-            <label>🔍 Zoom: <span id="zoom-valor">100</span>%</label>
-            <input type="range" id="zoom-range" min="50" max="400" value="100">
-          </div>
-          <button class="btn btn-secondary" onclick="resetarZoom()" style="width:fit-content;">🔄 Resetar</button>
+        <div class="controls">
+          <label>📷 Escolher Imagem</label>
+          <input type="file" id="file-input" accept="image/*">
+          
+          <label class="zoom-label">🔍 Zoom: <span id="zoom-value">100</span>%</label>
+          <input type="range" id="zoom-slider" min="50" max="300" value="100">
+          
+          <button class="btn btn-secondary" onclick="resetarZoom()" style="margin-top: 15px;">🔄 Resetar</button>
         </div>
       </div>
     </div>
@@ -104,14 +98,13 @@
         </div>
         <div class="form-group">
           <label>Telefone *</label>
-          <input type="text" id="cliente-telefone" placeholder="(00) 00000-0000">
+          <input type="tel" id="cliente-telefone" placeholder="(00) 00000-0000">
         </div>
         <div class="form-group">
           <label>Barraca</label>
           <select id="barraca">
             <option value="Barraca 1">Barraca 1</option>
             <option value="Barraca 2">Barraca 2</option>
-            <option value="Barraca 3">Barraca 3</option>
           </select>
         </div>
         <div class="form-group">
@@ -131,109 +124,94 @@
         <div class="form-group">
           <label>Tamanho</label>
           <select id="tamanho">
-            <option value="3,5x3,5">3,5x3,5 cm</option>
-            <option value="5x5">5x5 cm</option>
-            <option value="7x7">7x7 cm</option>
+            <option value="3,5x3,5 cm">3,5x3,5 cm</option>
+            <option value="5x5 cm">5x5 cm</option>
           </select>
         </div>
-        <div class="form-group full">
+        <div class="form-group" style="grid-column: 1 / -1;">
           <label>Quantidade</label>
           <input type="number" id="quantidade" value="1" min="1">
         </div>
       </div>
-      <div class="botoes-acao">
-        <button class="btn btn-primary" onclick="finalizarPedido(true)">🛒 Finalizar e Continuar Comprando</button>
-        <button class="btn btn-secondary" onclick="finalizarPedido(false)">✅ Finalizar Pedido</button>
+
+      <div class="btn-group">
+        <button class="btn btn-success" onclick="finalizarPedido(true)">🛒 Finalizar e Continuar Comprando</button>
+        <button class="btn btn-primary" onclick="finalizarPedido(false)">✅ Finalizar Pedido</button>
       </div>
     </div>
   </main>
 
   <script>
-    const inputImagem = document.getElementById('input-imagem');
-    const previewImg = document.getElementById('preview-img');
-    const previewMoldura = document.getElementById('preview-moldura');
-    const zoomRange = document.getElementById('zoom-range');
-    const zoomValor = document.getElementById('zoom-valor');
-    const produtoSelect = document.getElementById('produto');
-    const formatoSelect = document.getElementById('formato');
-    const tamanhoSelect = document.getElementById('tamanho');
-
     let imagemBase64 = '';
     let zoomAtual = 100;
 
-    // Troca de produto → ajusta formato e tamanho automaticamente
+    // Configuração automática ao trocar produto
+    const produtoSelect = document.getElementById('produto');
+    const formatoSelect = document.getElementById('formato');
+    const tamanhoSelect = document.getElementById('tamanho');
+    const previewMoldura = document.getElementById('preview-moldura');
+
     produtoSelect.addEventListener('change', function() {
       if (this.value === 'Botton Quadrado') {
         formatoSelect.value = 'quadrado';
-        tamanhoSelect.value = '5x5';
+        tamanhoSelect.value = '5x5 cm';
         previewMoldura.className = 'preview-moldura quadrado';
-      } else {
+      } else if (this.value === 'Botton Redondo') {
         formatoSelect.value = 'redondo';
-        tamanhoSelect.value = '3,5x3,5';
+        tamanhoSelect.value = '3,5x3,5 cm';
         previewMoldura.className = 'preview-moldura redondo';
       }
     });
 
-    inputImagem.addEventListener('change', function(e) {
+    // Upload de imagem
+    document.getElementById('file-input').addEventListener('change', function(e) {
       const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(ev) {
-        imagemBase64 = ev.target.result;
-        previewImg.src = imagemBase64;
-        previewImg.style.display = 'block';
-        aplicarZoom();
-      };
-      reader.readAsDataURL(file);
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          imagemBase64 = event.target.result;
+          const img = document.getElementById('preview-img');
+          img.src = imagemBase64;
+          img.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
     });
 
-    zoomRange.addEventListener('input', function() {
-      zoomAtual = parseInt(this.value);
-      zoomValor.textContent = zoomAtual;
-      aplicarZoom();
+    // Zoom
+    document.getElementById('zoom-slider').addEventListener('input', function() {
+      zoomAtual = this.value;
+      document.getElementById('zoom-value').textContent = zoomAtual;
+      const img = document.getElementById('preview-img');
+      img.style.transform = `scale(${zoomAtual / 100})`;
     });
-
-    function aplicarZoom() {
-      const scale = zoomAtual / 100;
-      previewImg.style.transform = `scale(${scale})`;
-      previewImg.style.transformOrigin = 'center center';
-    }
 
     function resetarZoom() {
       zoomAtual = 100;
-      zoomRange.value = 100;
-      zoomValor.textContent = '100';
-      aplicarZoom();
+      document.getElementById('zoom-slider').value = 100;
+      document.getElementById('zoom-value').textContent = 100;
+      const img = document.getElementById('preview-img');
+      img.style.transform = 'scale(1)';
     }
 
     async function finalizarPedido(continuar) {
       const nome = document.getElementById('cliente-nome').value.trim();
       const telefone = document.getElementById('cliente-telefone').value.trim();
-      const barraca = document.getElementById('barraca').value;
-      const produto = produtoSelect.value;
-      const formato = formatoSelect.value;
-      const tamanho = tamanhoSelect.value;
-      const quantidade = document.getElementById('quantidade').value;
-
+      
       if (!nome || !telefone) {
-        alert('Preencha nome e telefone.');
-        return;
-      }
-      if (!imagemBase64) {
-        alert('Selecione uma imagem.');
+        alert('Preencha nome e telefone');
         return;
       }
 
       const pedido = {
         cliente_nome: nome,
         cliente_telefone: telefone,
-        barraca,
-        produto,
-        formato,
-        tamanho,
-        quantidade: parseInt(quantidade),
-        imagem: imagemBase64,
-        status: 'recebido'
+        barraca: document.getElementById('barraca').value,
+        produto: document.getElementById('produto').value,
+        formato: document.getElementById('formato').value,
+        tamanho: document.getElementById('tamanho').value,
+        quantidade: parseInt(document.getElementById('quantidade').value),
+        imagem: imagemBase64
       };
 
       try {
@@ -242,22 +220,25 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(pedido)
         });
-        if (!res.ok) throw new Error('Erro ao salvar');
-        alert('Pedido enviado com sucesso!');
-        if (!continuar) {
-          window.location.href = '/carrinho.html';
+
+        if (res.ok) {
+          alert('Pedido enviado com sucesso!');
+          if (!continuar) {
+            window.location.href = '/carrinho.html';
+          } else {
+            // Limpa formulário
+            document.getElementById('cliente-nome').value = '';
+            document.getElementById('cliente-telefone').value = '';
+            document.getElementById('quantidade').value = '1';
+            document.getElementById('file-input').value = '';
+            document.getElementById('preview-img').style.display = 'none';
+            imagemBase64 = '';
+          }
         } else {
-          // Limpa para novo pedido
-          inputImagem.value = '';
-          previewImg.style.display = 'none';
-          imagemBase64 = '';
-          resetarZoom();
-          document.getElementById('cliente-nome').value = '';
-          document.getElementById('cliente-telefone').value = '';
-          document.getElementById('quantidade').value = '1';
+          alert('Erro ao enviar pedido');
         }
       } catch (err) {
-        alert('Erro ao enviar pedido: ' + err.message);
+        alert('Erro de conexão');
       }
     }
   </script>
