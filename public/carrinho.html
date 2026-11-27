@@ -69,11 +69,11 @@
     <div id="lista-pedidos-cliente">
       <p class="msg-info">Digite seu telefone para ver seus pedidos.</p>
     </div>
-
-    <div style="text-align: center; margin-top: 30px;">
-      <a href="/" style="display: inline-block; background: #2563eb; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 16px;">🛒 Continuar Comprando</a>
-    </div>
   </main>
+
+  <div style="text-align: center; margin: 30px 0 40px;">
+    <a href="/" style="display: inline-block; background: #2563eb; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 16px; box-shadow: 0 2px 8px rgba(37,99,235,0.3);">🛒 Continuar Comprando</a>
+  </div>
 
   <script>
     function getImgSrc(pedido) {
@@ -95,27 +95,41 @@
           return;
         }
 
-        div.innerHTML = meus.map(p => {
+        // Agrupa pedidos pelo mesmo cliente (nome + telefone)
+        const clienteNome = meus[0].cliente_nome || 'Cliente';
+        const totalItens = meus.reduce((sum, p) => sum + (parseInt(p.quantidade) || 0), 0);
+        const statusUnico = [...new Set(meus.map(p => p.status))];
+        const statusPrincipal = statusUnico.length === 1 ? statusUnico[0] : 'em_producao';
+
+        const itensHtml = meus.map(p => {
           const classeFormato = p.formato === 'redondo' ? 'redondo' : 'quadrado';
           return `
-            <div class="pedido-card">
-              <div class="botton-preview">
-                <div class="botton-moldura ${classeFormato}">
-                  <img src="${getImgSrc(p)}" alt="${p.produto}">
-                </div>
-                <div class="botton-info">📐 ${p.tamanho} cm • ${p.formato}</div>
+            <div class="item-pedido">
+              <div class="botton-moldura ${classeFormato}">
+                <img src="${getImgSrc(p)}" alt="${p.produto}">
               </div>
-              <div class="pedido-detalhes">
-                <h3>${p.produto}</h3>
-                <p><strong>Formato:</strong> ${p.formato}</p>
-                <p><strong>Tamanho:</strong> ${p.tamanho} cm</p>
-                <p><strong>Quantidade:</strong> ${p.quantidade}</p>
-                <p><strong>Barraca:</strong> ${p.barraca}</p>
-                <p><strong>Status:</strong> <span class="status ${p.status}">${p.status.replace('_', ' ')}</span></p>
+              <div class="item-info">
+                <strong>${p.produto}</strong>
+                <span>${p.formato} • ${p.tamanho} cm • Qtd: ${p.quantidade}</span>
               </div>
             </div>
           `;
         }).join('');
+
+        div.innerHTML = `
+          <div class="pedido-card pedido-agrupado">
+            <div class="pedido-header">
+              <div>
+                <h3>📦 Pedido de ${clienteNome}</h3>
+                <p class="pedido-meta">Telefone: ${telefone} • ${meus.length} item(ns) • Total: ${totalItens} unidade(s)</p>
+              </div>
+              <span class="status ${statusPrincipal}">${statusPrincipal.replace('_', ' ')}</span>
+            </div>
+            <div class="itens-lista">
+              ${itensHtml}
+            </div>
+          </div>
+        `;
       } catch (err) {
         document.getElementById('lista-pedidos-cliente').innerHTML = '<p class="msg-info">Erro ao buscar pedidos.</p>';
       }
