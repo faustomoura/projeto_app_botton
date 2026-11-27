@@ -237,6 +237,20 @@
       moldura.classList.add(formato.value);
     });
 
+    // Quando o usuário troca o produto, ajusta Formato e Tamanho automaticamente
+    document.getElementById('produto-select').addEventListener('change', (e) => {
+      const produtoSel = e.target.value;
+      if (produtoSel.includes('Quadrado')) {
+        formato.value = 'quadrado';
+        document.getElementById('tamanho').value = '5x5';
+      } else {
+        formato.value = 'redondo';
+        document.getElementById('tamanho').value = '3.5x3.5';
+      }
+      moldura.classList.remove('redondo', 'quadrado');
+      moldura.classList.add(formato.value);
+    });
+
     // Recorta a imagem no canvas e retorna data URL (base64)
     function recortarImagem() {
       return new Promise((resolve, reject) => {
