@@ -3,7 +3,7 @@
 <head><script src="https://myhub.ia.br/canvas-vendor/tailwind.js"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Personalizar - AC Grafic</title>
+  <title>Personalizar Botton - AC Grafic</title>
   <style>
     :root {
       --primary: #2563eb;
@@ -12,94 +12,43 @@
       --card: #ffffff;
       --text: #1e293b;
       --border: #cbd5e1;
-      --danger: #dc2626;
-      --green: #10b981;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body { background: var(--bg); color: var(--text); min-height: 100vh; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+
     header { background: var(--primary); color: white; padding: 15px 0; }
     header .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
     header h1 { font-size: 28px; }
-    nav { display: flex; align-items: center; gap: 10px; }
-    nav a { color: white; margin-left: 8px; text-decoration: none; font-weight: 500; padding: 6px 12px; border-radius: 6px; }
+    nav a { color: white; margin-left: 20px; text-decoration: none; font-weight: 500; padding: 6px 12px; border-radius: 6px; }
     nav a:hover { background: rgba(255,255,255,0.2); }
-    .cart-badge {
-      background: white;
-      color: var(--primary);
-      border-radius: 20px;
-      padding: 6px 14px;
-      font-weight: 700;
-      font-size: 14px;
-    }
-    h2 { margin: 10px 0 20px; color: var(--text); }
 
-    .editor { display: grid; grid-template-columns: 1fr 350px; gap: 30px; align-items: start; }
+    h2 { margin: 30px 0 20px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-grid .full { grid-column: 1 / -1; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; }
+    input, select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; }
+    input:focus, select:focus { outline: 2px solid var(--primary); border-color: var(--primary); }
+    button { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px; }
+    button:hover { background: var(--primary-dark); }
+    button:disabled { background: #94a3b8; cursor: not-allowed; }
+    .btn-secondary { background: #64748b; }
+    .btn-secondary:hover { background: #475569; }
 
-    .canvas-area {
-      background: #e2e8f0; min-height: 500px; border-radius: 12px;
-      display: flex; justify-content: center; align-items: center;
-      padding: 30px; position: relative;
-    }
-    .moldura {
-      width: 350px; height: 350px; overflow: hidden; position: relative;
-      background: #fff; border: 4px dashed #2563eb; cursor: grab;
-      touch-action: none; user-select: none;
-    }
-    .moldura:active { cursor: grabbing; }
+    .editor-area { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 20px; }
+    .moldura { width: 350px; height: 350px; background: #e2e8f0; border-radius: 8px; overflow: hidden; display: flex; justify-content: center; align-items: center; position: relative; touch-action: none; cursor: grab; flex-shrink: 0; }
     .moldura.redondo { border-radius: 50%; }
     .moldura.quadrado { border-radius: 12px; }
-    .moldura img {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      object-fit: contain; pointer-events: none; transform-origin: center center;
-    }
-    .editor-hint {
-      position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-      background: rgba(0,0,0,0.8); color: white; padding: 8px 16px;
-      border-radius: 20px; font-size: 13px; pointer-events: none;
-    }
-
-    .controles {
-      background: var(--card); padding: 20px; border-radius: 12px;
-      border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px;
-    }
-    .controles label { font-weight: 600; font-size: 14px; color: var(--text); }
-    .controles input, .controles select {
-      padding: 10px; border: 1px solid var(--border); border-radius: 6px;
-      font-size: 14px; width: 100%;
-    }
-    .btn { border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; width: 100%; color: white; }
-    .btn-primary { background: var(--primary); }
-    .btn-primary:hover { background: var(--primary-dark); }
-    .btn-green { background: var(--green); }
-    .btn-green:hover { background: #059669; }
-    .btn-reset { background: #64748b; }
-    .btn-reset:hover { background: #475569; }
-
-    .item-status {
-      background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px;
-      padding: 10px 12px; font-size: 13px; color: #065f46;
-    }
-    .btn-continuar { background: var(--primary); }
-    .btn-continuar:hover { background: var(--primary-dark); }
-
-    .carrinho-box {
-      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      padding: 16px; margin-top: 30px;
-    }
-    .carrinho-box h3 { margin-bottom: 10px; font-size: 18px; }
-    .carrinho-item {
-      display: flex; justify-content: space-between; align-items: center;
-      background: #f1f5f9; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; font-size: 14px;
-    }
-    .carrinho-item .tipo { font-weight: 700; color: var(--primary); }
-    .carrinho-item .remover { background: var(--danger); color: white; border: none; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-size: 12px; }
-    .msg-info { color: #64748b; font-size: 14px; }
+    .moldura img { width: 100%; height: 100%; object-fit: contain; user-select: none; pointer-events: none; }
+    .editor-controles { flex: 1; min-width: 280px; }
+    .botao-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
 
     @media (max-width: 768px) {
-      .editor { grid-template-columns: 1fr; }
       header .container { flex-direction: column; gap: 10px; }
-      .moldura { width: 280px; height: 280px; }
+      nav a { margin: 0 5px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .editor-area { flex-direction: column; align-items: center; }
     }
   </style>
 </head>
@@ -109,7 +58,6 @@
       <h1>🎨 AC Grafic</h1>
       <nav>
         <a href="/">Início</a>
-        <span class="cart-badge">🛒 <span id="nav-cart-count">0</span></span>
         <a href="/carrinho.html">Meus Pedidos</a>
         <a href="/painel.html">Painel da Barraca</a>
       </nav>
@@ -117,286 +65,269 @@
   </header>
 
   <main class="container">
-    <h2 id="titulo-produto">Personalizar</h2>
+    <h2>🧑‍🎨 Personalizar Botton</h2>
 
-    <div class="editor">
-      <div class="canvas-area">
-        <div id="moldura" class="moldura redondo">
-          <img id="preview-img" src="" alt="Pré-visualização">
+    <div class="card">
+      <div class="editor-area">
+        <div class="moldura redondo" id="moldura">
+          <img id="preview-img" alt="Pré-visualização" style="display: none;">
         </div>
-        <div class="editor-hint">🖱️ Arraste para posicionar • Scroll para zoom</div>
-      </div>
-
-      <div class="controles">
-        <label>📤 Enviar imagem:</label>
-        <input type="file" id="upload" accept="image/*">
-
-        <label>📐 Formato:</label>
-        <select id="formato">
-          <option value="redondo">Redondo</option>
-          <option value="quadrado">Quadrado</option>
-        </select>
-
-        <label>📏 Tamanho:</label>
-        <select id="tamanho">
-          <option value="3x3">3,0 cm</option>
-          <option value="3.5x3.5">3,5 cm</option>
-          <option value="4x4">4,0 cm</option>
-          <option value="5x5">5,0 cm</option>
-        </select>
-
-        <label>🔢 Quantidade:</label>
-        <input type="number" id="quantidade" value="1" min="1">
-
-        <label>🏪 Selecione a barraca:</label>
-        <select id="barraca">
-          <option value="Barraca 1">Barraca 1</option>
-          <option value="Barraca 2">Barraca 2</option>
-          <option value="Barraca 3">Barraca 3</option>
-        </select>
-
-        <label>👤 Seu nome:</label>
-        <input type="text" id="cliente_nome" placeholder="Nome completo">
-
-        <label>📱 Telefone:</label>
-        <input type="text" id="cliente_telefone" placeholder="(XX) XXXXX-XXXX">
-
-        <label>🔍 Zoom:</label>
-        <input type="range" id="zoom-slider" min="0.3" max="5" step="0.1" value="1">
-
-        <button id="btn-reset" class="btn btn-reset">🔄 Resetar Posição</button>
-
-        <div class="item-status" id="item-status" style="display:none;"></div>
-
-        <button id="btn-continuar" class="btn btn-continuar">🛒 Adicionar + Continuar Comprando</button>
-        <button id="btn-finalizar" class="btn btn-primary">✅ Finalizar Pedido</button>
+        <div class="editor-controles">
+          <h3 style="margin-bottom: 12px;">📷 Sua Imagem</h3>
+          <input type="file" id="upload" accept="image/*">
+          <div style="margin: 16px 0;">
+            <label for="zoom-slider">🔍 Zoom: <span id="zoom-valor">100%</span></label>
+            <input type="range" id="zoom-slider" min="0.3" max="5" step="0.1" value="1" style="width: 100%;">
+          </div>
+          <div class="botao-row">
+            <button type="button" class="btn-secondary" id="btn-reset">🔄 Resetar</button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="carrinho-box">
-      <h3>🛒 Meu Carrinho <span id="cart-total" style="font-size:14px; color:#64748b;"></span></h3>
-      <div id="cart-items">
-        <p class="msg-info">Nenhum item adicionado ainda. Continue comprando para montar seu pedido.</p>
+    <div class="card">
+      <h3 style="margin-bottom: 16px;">📝 Detalhes do Pedido</h3>
+      <div class="form-grid">
+        <div>
+          <label for="cliente_nome">Nome do Cliente *</label>
+          <input type="text" id="cliente_nome" placeholder="Ex.: Maria Silva">
+        </div>
+        <div>
+          <label for="cliente_telefone">Telefone *</label>
+          <input type="text" id="cliente_telefone" placeholder="Ex.: 16999999999">
+        </div>
+        <div>
+          <label for="barraca">Barraca</label>
+          <select id="barraca">
+            <option value="Barraca 1">Barraca 1</option>
+            <option value="Barraca 2">Barraca 2</option>
+            <option value="Barraca 3">Barraca 3</option>
+          </select>
+        </div>
+        <div>
+          <label for="produto">Produto</label>
+          <select id="produto-select">
+            <option value="Botton Redondo">Botton Redondo</option>
+            <option value="Botton Quadrado">Botton Quadrado</option>
+          </select>
+        </div>
+        <div>
+          <label for="formato">Formato</label>
+          <select id="formato">
+            <option value="redondo">Redondo</option>
+            <option value="quadrado">Quadrado</option>
+          </select>
+        </div>
+        <div>
+          <label for="tamanho">Tamanho</label>
+          <select id="tamanho">
+            <option value="3x3">3x3 cm</option>
+            <option value="3.5x3.5">3,5x3,5 cm</option>
+            <option value="4x4">4x4 cm</option>
+            <option value="5x5">5x5 cm</option>
+          </select>
+        </div>
+        <div class="full">
+          <label for="quantidade">Quantidade</label>
+          <input type="number" id="quantidade" min="1" value="1">
+        </div>
+      </div>
+      <div class="botao-row" style="margin-top: 24px;">
+        <button id="btn-finalizar">✅ Finalizar Pedido</button>
       </div>
     </div>
   </main>
 
   <script>
-    const CART_KEY = 'carrinho_acgrafic';
-    const MAX_IMG = 800; // tamanho máximo da imagem comprimida
-
-    // ========== ESTADO DO EDITOR ==========
-    let posX = 0, posY = 0, zoom = 1, imgDataUrl = null;
-    const moldura = document.getElementById('moldura');
+    const upload = document.getElementById('upload');
     const previewImg = document.getElementById('preview-img');
+    const formato = document.getElementById('formato');
+    const moldura = document.getElementById('moldura');
+    const btnFinalizar = document.getElementById('btn-finalizar');
+    const btnReset = document.getElementById('btn-reset');
+    const zoomSlider = document.getElementById('zoom-slider');
+    const zoomValor = document.getElementById('zoom-valor');
 
-    // ========== CARREGAR PRODUTO SELECIONADO ==========
-    const produtoSelecionado = localStorage.getItem('produto_selecionado') || 'Botton Redondo';
-    document.getElementById('titulo-produto').textContent = 'Personalizar ' + produtoSelecionado;
-    if (produtoSelecionado.includes('Quadrado')) {
-      moldura.classList.remove('redondo');
-      moldura.classList.add('quadrado');
-      document.getElementById('formato').value = 'quadrado';
-    }
+    let imageState = { x: 0, y: 0, scale: 1, isDragging: false, startX: 0, startY: 0 };
+    let imagemOriginal = null;
+    let imagemBase64 = null;
 
-    // ========== CARRINHO (localStorage) ==========
-    function getCart() {
-      try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch (e) { return []; }
-    }
-    function saveCart(cart) { localStorage.setItem(CART_KEY, JSON.stringify(cart)); atualizarCarrinho(); }
-    function atualizarCarrinho() {
-      const cart = getCart();
-      const count = cart.reduce((s, i) => s + Number(i.quantidade || 1), 0);
-      document.getElementById('nav-cart-count').textContent = count;
-      document.getElementById('cart-total').textContent = cart.length ? '(' + cart.length + ' item(ns))' : '';
-      const box = document.getElementById('cart-items');
-      if (!cart.length) {
-        box.innerHTML = '<p class="msg-info">Nenhum item adicionado ainda. Continue comprando para montar seu pedido.</p>';
-        return;
-      }
-      box.innerHTML = cart.map((item, idx) => `
-        <div class="carrinho-item">
-          <div>
-            <span class="tipo">${item.produto}</span><br>
-            <span>${item.formato === 'redondo' ? 'Redondo' : 'Quadrado'} • ${item.tamanho} cm • qtd ${item.quantidade}</span>
-          </div>
-          <button class="remover" onclick="removerItem(${idx})">✕ Remover</button>
-        </div>
-      `).join('');
-    }
-    function removerItem(idx) {
-      const cart = getCart();
-      cart.splice(idx, 1);
-      saveCart(cart);
-    }
-
-    // ========== UPLOAD COM COMPRESSÃO ==========
-    document.getElementById('upload').addEventListener('change', (e) => {
+    upload.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      comprimirImagem(file).then((comprimida) => {
-        imgDataUrl = comprimida;
-        previewImg.src = imgDataUrl;
-        resetPosicao();
-        const status = document.getElementById('item-status');
-        status.style.display = 'block';
-        status.textContent = '✅ Imagem otimizada (' + Math.round((file.size - base64Size(comprimida)) / file.size * 100) + '% menor)';
-      });
-    });
-
-    function base64Size(dataUrl) {
-      return Math.round((dataUrl.length - (dataUrl.indexOf(',') + 1)) * 3 / 4);
-    }
-
-    function comprimirImagem(file) {
-      return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        imagemBase64 = event.target.result; // salva o base64
         const img = new Image();
-        const reader = new FileReader();
-        reader.onload = (ev) => { img.src = ev.target.result; };
         img.onload = () => {
-          let { width, height } = img;
-          const scale = Math.min(1, MAX_IMG / Math.max(width, height));
-          width = Math.round(width * scale);
-          height = Math.round(height * scale);
-          const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
-          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-          resolve(canvas.toDataURL('image/jpeg', 0.7));
+          imagemOriginal = img;
+          previewImg.src = event.target.result;
+          previewImg.style.display = 'block';
+          imageState = { x: 0, y: 0, scale: 1, isDragging: false, startX: 0, startY: 0 };
+          zoomSlider.value = 1;
+          atualizarTransform();
         };
-        img.onerror = reject;
-        reader.readAsDataURL(file);
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function atualizarTransform() {
+      previewImg.style.transform = `translate(${imageState.x}px, ${imageState.y}px) scale(${imageState.scale})`;
+      zoomValor.innerText = Math.round(imageState.scale * 100) + '%';
+    }
+
+    // DRAG - Mouse
+    moldura.addEventListener('mousedown', (e) => {
+      if (!previewImg.src) return;
+      imageState.isDragging = true;
+      imageState.startX = e.clientX - imageState.x;
+      imageState.startY = e.clientY - imageState.y;
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', (e) => {
+      if (!imageState.isDragging) return;
+      imageState.x = e.clientX - imageState.startX;
+      imageState.y = e.clientY - imageState.startY;
+      atualizarTransform();
+    });
+    document.addEventListener('mouseup', () => { imageState.isDragging = false; });
+
+    // DRAG - Touch
+    moldura.addEventListener('touchstart', (e) => {
+      if (!previewImg.src || e.touches.length !== 1) return;
+      const touch = e.touches[0];
+      imageState.isDragging = true;
+      imageState.startX = touch.clientX - imageState.x;
+      imageState.startY = touch.clientY - imageState.y;
+    }, { passive: true });
+    moldura.addEventListener('touchmove', (e) => {
+      if (!imageState.isDragging || e.touches.length !== 1) return;
+      const touch = e.touches[0];
+      imageState.x = touch.clientX - imageState.startX;
+      imageState.y = touch.clientY - imageState.startY;
+      atualizarTransform();
+    }, { passive: true });
+    moldura.addEventListener('touchend', () => { imageState.isDragging = false; });
+
+    // ZOOM - Scroll
+    moldura.addEventListener('wheel', (e) => {
+      if (!previewImg.src) return;
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+      imageState.scale = Math.max(0.3, Math.min(5, imageState.scale + delta));
+      zoomSlider.value = imageState.scale;
+      atualizarTransform();
+    }, { passive: false });
+    zoomSlider.addEventListener('input', (e) => {
+      imageState.scale = parseFloat(e.target.value);
+      atualizarTransform();
+    });
+
+    btnReset.addEventListener('click', () => {
+      imageState.x = 0; imageState.y = 0; imageState.scale = 1;
+      zoomSlider.value = 1;
+      atualizarTransform();
+    });
+
+    formato.addEventListener('change', () => {
+      moldura.classList.remove('redondo', 'quadrado');
+      moldura.classList.add(formato.value);
+    });
+
+    // Recorta a imagem no canvas e retorna data URL (base64)
+    function recortarImagem() {
+      return new Promise((resolve, reject) => {
+        if (!imagemOriginal) { reject(new Error('Nenhuma imagem carregada')); return; }
+
+        const tamanhos = { '3x3': 354, '3.5x3.5': 413, '4x4': 472, '5x5': 591 };
+        const tamanhoFinal = tamanhos[document.getElementById('tamanho').value] || 354;
+        const formatoSelecionado = formato.value;
+        const MOLDURA = 350;
+        const img = imagemOriginal;
+
+        const scaleToFit = Math.min(MOLDURA / img.width, MOLDURA / img.height);
+        const displayW = img.width * scaleToFit;
+        const displayH = img.height * scaleToFit;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = tamanhoFinal;
+        canvas.height = tamanhoFinal;
+        const ctx = canvas.getContext('2d');
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, tamanhoFinal, tamanhoFinal);
+
+        if (formatoSelecionado === 'redondo') {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(tamanhoFinal / 2, tamanhoFinal / 2, tamanhoFinal / 2, 0, Math.PI * 2);
+          ctx.clip();
+        }
+
+        const ratio = tamanhoFinal / MOLDURA;
+        const finalDisplayW = displayW * ratio;
+        const finalDisplayH = displayH * ratio;
+        const cx = tamanhoFinal / 2;
+        const cy = tamanhoFinal / 2;
+        const scaledW = finalDisplayW * imageState.scale;
+        const scaledH = finalDisplayH * imageState.scale;
+        const drawX = cx - scaledW / 2 + imageState.x * ratio;
+        const drawY = cy - scaledH / 2 + imageState.y * ratio;
+
+        ctx.drawImage(img, drawX, drawY, scaledW, scaledH);
+
+        if (formatoSelecionado === 'redondo') ctx.restore();
+
+        resolve(canvas.toDataURL('image/png', 0.95));
       });
     }
 
-    // ========== FORMATA/DRAG/ZOOM ==========
-    const formatoSel = document.getElementById('formato');
-    formatoSel.addEventListener('change', () => {
-      moldura.classList.toggle('redondo', formatoSel.value === 'redondo');
-      moldura.classList.toggle('quadrado', formatoSel.value === 'quadrado');
-    });
+    // FINALIZAR PEDIDO — envia JSON com base64
+    btnFinalizar.addEventListener('click', async () => {
+      const clienteNome = document.getElementById('cliente_nome').value.trim();
+      const clienteTel = document.getElementById('cliente_telefone').value.trim();
+      if (!clienteNome || !clienteTel) { alert('Preencha nome e telefone.'); return; }
+      if (!imagemOriginal) { alert('Envie uma imagem primeiro.'); return; }
 
-    let dragging = false, startX, startY;
-    moldura.addEventListener('mousedown', (e) => { dragging = true; startX = e.clientX - posX; startY = e.clientY - posY; });
-    moldura.addEventListener('touchstart', (e) => { if (e.touches.length === 1) { dragging = true; startX = e.touches[0].clientX - posX; startY = e.touches[0].clientY - posY; } }, { passive: true });
-    window.addEventListener('mousemove', (e) => { if (dragging) { posX = e.clientX - startX; posY = e.clientY - startY; aplicarTransform(); } });
-    window.addEventListener('touchmove', (e) => { if (dragging && e.touches.length === 1) { posX = e.touches[0].clientX - startX; posY = e.touches[0].clientY - startY; aplicarTransform(); } }, { passive: true });
-    window.addEventListener('mouseup', () => { dragging = false; });
-    window.addEventListener('touchend', () => { dragging = false; });
+      btnFinalizar.disabled = true;
+      btnFinalizar.innerText = '⏳ Processando...';
 
-    moldura.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      zoom = Math.min(5, Math.max(0.3, zoom - e.deltaY * 0.001));
-      document.getElementById('zoom-slider').value = zoom;
-      aplicarTransform();
-    }, { passive: false });
-
-    const zoomSlider = document.getElementById('zoom-slider');
-    zoomSlider.addEventListener('input', () => { zoom = parseFloat(zoomSlider.value); aplicarTransform(); });
-
-    function aplicarTransform() {
-      previewImg.style.transform = `translate(${posX}px, ${posY}px) scale(${zoom})`;
-    }
-    function resetPosicao() {
-      posX = 0; posY = 0; zoom = 1;
-      document.getElementById('zoom-slider').value = 1;
-      aplicarTransform();
-    }
-    document.getElementById('btn-reset').addEventListener('click', resetPosicao);
-
-    // ========== CRIAR ITEM ==========
-    function buildItem() {
-      const format = formatoSel.value;
-      let nome = format === 'redondo'
-        ? (produtoSelecionado.includes('Imã') ? 'Imã Redondo' : 'Botton Redondo')
-        : (produtoSelecionado.includes('Imã') ? 'Imã Quadrado' : 'Botton Quadrado');
-      return {
-        produto: nome,
-        formato: format,
-        tamanho: document.getElementById('tamanho').value,
-        quantidade: parseFloat(document.getElementById('quantidade').value) || 1,
-        barraca: document.getElementById('barraca').value,
-        cliente_nome: document.getElementById('cliente_nome').value.trim(),
-        cliente_telefone: document.getElementById('cliente_telefone').value.trim(),
-        imagem: imgDataUrl
-      };
-    }
-    function validar(item) {
-      const status = document.getElementById('item-status');
-      if (!item.imagem) { status.style.display = 'block'; status.textContent = '❌ Envie uma imagem primeiro.'; return false; }
-      if (!item.cliente_nome) { status.style.display = 'block'; status.textContent = '❌ Informe seu nome.'; return false; }
-      if (item.cliente_telefone.length < 8) { status.style.display = 'block'; status.textContent = '❌ Telefone inválido. Use (XX) XXXXX-XXXX.'; return false; }
-      status.style.display = 'none';
-      return true;
-    }
-
-    // ========== CONTINUAR COMPRANDO ==========
-    document.getElementById('btn-continuar').addEventListener('click', () => {
-      const item = buildItem();
-      if (!validar(item)) return;
-      const cart = getCart();
-      cart.push(item);
-      saveCart(cart);
-      localStorage.removeItem('produto_selecionado');
-      window.location.href = '/';
-    });
-
-    // ========== FINALIZAR (envio individual por item) ==========
-    document.getElementById('btn-finalizar').addEventListener('click', async () => {
-      const item = buildItem();
-      if (!validar(item)) return;
-      const cart = getCart();
-      cart.push(item);
-      saveCart(cart);
-
-      if (!cart.length) { alert('Seu carrinho está vazio.'); return; }
-
-      const btn = document.getElementById('btn-finalizar');
-      btn.disabled = true;
-      btn.textContent = '⏳ Enviando...';
-
-      // Envia UM único pedido com todos os itens do carrinho
       try {
+        const imagemRecortada = await recortarImagem();
+
+        const pedido = {
+          cliente_nome: clienteNome,
+          cliente_telefone: clienteTel,
+          barraca: document.getElementById('barraca').value,
+          produto: document.getElementById('produto-select').value,
+          formato: formato.value,
+          tamanho: document.getElementById('tamanho').value,
+          quantidade: parseInt(document.getElementById('quantidade').value, 10),
+          imagem: imagemRecortada // data URL com base64
+        };
+
         const res = await fetch('/api/pedidos', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ itens: cart })
+          body: JSON.stringify(pedido)
         });
-        if (!res.ok) throw new Error('Erro no servidor');
-        localStorage.removeItem(CART_KEY);
-        alert('✅ Pedido realizado com sucesso! (' + cart.length + ' item(ns) no pedido)');
-        window.location.href = '/carrinho.html';
-      } catch (err) {
-        // Fallback: se o servidor não aceitar o pacote completo (ex.: limite de tamanho),
-        // envia cada item separadamente para não perder o pedido.
-        let sucesso = 0, falha = 0;
-        for (const pedido of cart) {
-          try {
-            const r = await fetch('/api/pedidos', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(pedido)
-            });
-            if (r.ok) { sucesso++; } else { falha++; }
-          } catch (e) { falha++; }
-        }
-        if (falha === 0) {
-          localStorage.removeItem(CART_KEY);
-          alert('✅ Pedido realizado com sucesso! (' + sucesso + ' item(ns) enviados)');
-          window.location.href = '/carrinho.html';
-        } else if (sucesso > 0) {
-          alert('⚠️ ' + sucesso + ' enviado(s), ' + falha + ' falhou(ram).');
+
+        const data = await res.json();
+        if (data.id) {
+          alert(`Pedido enviado! Código: #${data.id}`);
           window.location.href = '/carrinho.html';
         } else {
-          alert('❌ Erro ao enviar pedido. Tente novamente.');
-          btn.disabled = false;
-          btn.textContent = '✅ Finalizar Pedido';
+          alert('Erro: ' + (data.error || 'desconhecido'));
         }
+      } catch (err) {
+        alert('Erro ao processar: ' + err.message);
+      } finally {
+        btnFinalizar.disabled = false;
+        btnFinalizar.innerText = '✅ Finalizar Pedido';
       }
     });
-
-    // Inicializa
-    atualizarCarrinho();
   </script>
 </body>
 </html>
