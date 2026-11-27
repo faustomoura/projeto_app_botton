@@ -1,16 +1,15 @@
 const express = require('express');
 const cors = require('cors');
-const multer = require('multer');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middlewares
 app.use(cors());
-app.use(express.json());
+// ⚠️ Aumenta o limite para aceitar imagens em base64 (até 10 MB)
+app.use(express.json({ limit: '10mb' }));
 
 // 🔑 Rota explícita para servir o index.html
 app.get('/', (req, res) => {
@@ -19,13 +18,6 @@ app.get('/', (req, res) => {
 
 // Servir arquivos estáticos da pasta public
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Servir uploads
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-app.use('/uploads', express.static(uploadsDir));
 
 // Banco de dados SQLite
 const db = new sqlite3.Database(path.join(__dirname, 'database.db'));
@@ -46,25 +38,28 @@ db.serialize(() => {
   )`);
 });
 
-// Configuração do Multer
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadsDir),
-  filename: (req, file, cb) => {
-    const unique = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, unique + path.extname(file.originalname));
-  }
-});
-const upload = multer({ storage });
+// ROTA: Criar pedido (recebe JSON com imagem em base64)
+app.post('/api/pedidos', (req, res) => {
+  const {
+    cliente_nome,
+    cliente_telefone,
+    barraca,
+    produto,
+    formato,
+    tamanho,
+    quantidade,
+    imagem
+  } = req.body;
 
-// ROTA: Criar pedido
-app.post('/api/pedidos', upload.single('imagem'), (req, res) => {
-  const { cliente_nome, cliente_telefone, barraca, produto, formato, tamanho, quantidade } = req.body;
-  const imagem = req.file ? req.file.filename : null;
+  // Validação mínima
+  if (!cliente_nome || !cliente_telefone || !produto) {
+    return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
+  }
 
   db.run(
     `INSERT INTO pedidos (cliente_nome, cliente_telefone, barraca, produto, formato, tamanho, quantidade, imagem)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [cliente_nome, cliente_telefone, barraca, produto, formato, tamanho, quantidade, imagem],
+    [cliente_nome, cliente_telefone, barraca, produto, formato, tamanho, quantidade, imagem || null],
     function(err) {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ id: this.lastID, message: 'Pedido criado com sucesso' });
@@ -89,21 +84,15 @@ app.put('/api/pedidos/:id/status', (req, res) => {
   });
 });
 
-// ROTA: Excluir pedido
+// ROTA: Excluir pedido (não precisa apagar arquivo, a imagem está no banco)
 app.delete('/api/pedidos/:id', (req, res) => {
-  db.get(`SELECT imagem FROM pedidos WHERE id = ?`, [req.params.id], (err, row) => {
-    if (row && row.imagem) {
-      const imgPath = path.join(uploadsDir, row.imagem);
-      if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
-    }
-    db.run(`DELETE FROM pedidos WHERE id = ?`, [req.params.id], function(err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.json({ message: 'Pedido excluído' });
-    });
+  db.run(`DELETE FROM pedidos WHERE id = ?`, [req.params.id], function(err) {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Pedido excluído' });
   });
 });
 
 app.listen(PORT, () => {
   console.log(`✅ Servidor rodando na porta ${PORT}`);
-  console.log(`📁 Pasta uploads: ${uploadsDir}`);
+  console.log('📦 Imagens salvas em base64 no banco SQLite');
 });
